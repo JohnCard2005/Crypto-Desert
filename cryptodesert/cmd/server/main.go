@@ -12,29 +12,70 @@ import (
 	"time"
 
 	"crypto-desert/internal/api"
+	"crypto-desert/internal/auth"
+	"crypto-desert/internal/db"
 	"crypto-desert/internal/store"
 )
 
 func main() {
-	// ── Configuração via variáveis de ambiente ────────────────────────────────
-	port := envOr("PORT", "8080")
-	webDir := envOr("WEB_DIR", "./web")
+	port      := envOr("PORT",       "8080")
+	webDir    := envOr("WEB_DIR",    "./web")
+	dbPath    := envOr("DB_PATH",    "./data/game.db")
+	jwtSecret := envOr("JWT_SECRET", "crypto-desert-secret-mude-em-producao")
 
-	// ── Stores (in-memory) ────────────────────────────────────────────────────
-	chars := store.NewCharacterStore()
-	battles := store.NewBattleStore()
-	runners := store.NewRunnerStore()
-	inventories := store.NewInventoryStore()
+	// ── Banco de dados (opcional) ──────────────────────────────────────────
+	// Se DB_PATH estiver vazio ou o SQLite não estiver disponível,
+	// o servidor roda em modo in-memory (dados perdidos ao reiniciar).
+	var database *db.DB
+	if dbPath != "" {
+		if err := os.MkdirAll("./data", 0755); err != nil {
+			log.Printf("[main] aviso: não foi possível criar pasta data: %v", err)
+		} else {
+			d, err := db.New(dbPath)
+			if err != nil {
+				log.Printf("[main] aviso: banco SQLite indisponível (%v) — modo in-memory", err)
+			} else {
+				database = d
+				defer database.Close()
+				log.Printf("[main] banco SQLite: %s", dbPath)
+			}
+		}
+	}
 
-	// ── Serviços ──────────────────────────────────────────────────────────────
+	if database == nil {
+		log.Printf("[main] ⚠ Rodando em modo IN-MEMORY — dados serão perdidos ao reiniciar")
+		log.Printf("[main] Para persistência: rode 'go get modernc.org/sqlite' e reinicie")
+	}
+
+	// ── Stores ────────────────────────────────────────────────────────────
+	chars       := store.NewCharacterStore(database)
+	battles     := store.NewBattleStore()
+	runners     := store.NewRunnerStore()
+	inventories := store.NewInventoryStore(database)
+	progress    := store.NewProgressStore(database)
+	ranking     := store.NewRankingStore(database)
+
+	// ── Auth ──────────────────────────────────────────────────────────────
+	authSvc := auth.NewService(database, jwtSecret)
+
+	// ── Limpeza periódica de sessões antigas ──────────────────────────────
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour)
+		defer ticker.Stop()
+		for range ticker.C {
+			store.CleanOldRunners(runners, 4*time.Hour)
+		}
+	}()
+
+	// ── Serviços ──────────────────────────────────────────────────────────
 	cryptoSvc := api.NewCryptoService()
 
-	// ── Handler e Rotas ───────────────────────────────────────────────────────
-	handler := api.NewHandler(chars, battles, runners, inventories, cryptoSvc)
+	// ── Handler e Rotas ───────────────────────────────────────────────────
+	handler := api.NewHandler(chars, battles, runners, inventories, progress, ranking, authSvc, cryptoSvc)
 	mux := http.NewServeMux()
 	api.RegisterRoutes(mux, handler, webDir)
 
-	// ── Servidor HTTP ─────────────────────────────────────────────────────────
+	// ── Servidor HTTP ──────────────────────────────────────────────────────
 	srv := &http.Server{
 		Addr:         ":" + port,
 		Handler:      mux,
@@ -43,49 +84,24 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Inicia servidor em goroutine para poder escutar sinais
 	go func() {
-		fmt.Printf("\n")
-		fmt.Printf("  ██████╗██████╗ ██╗   ██╗██████╗ ████████╗ ██████╗\n")
-		fmt.Printf(" ██╔════╝██╔══██╗╚██╗ ██╔╝██╔══██╗╚══██╔══╝██╔═══██╗\n")
-		fmt.Printf(" ██║     ██████╔╝ ╚████╔╝ ██████╔╝   ██║   ██║   ██║\n")
-		fmt.Printf(" ██║     ██╔══██╗  ╚██╔╝  ██╔═══╝    ██║   ██║   ██║\n")
-		fmt.Printf(" ╚██████╗██║  ██║   ██║   ██║        ██║   ╚██████╔╝\n")
-		fmt.Printf("  ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝        ╚═╝    ╚═════╝\n")
-		fmt.Printf("\n")
-		fmt.Printf("  ██████╗ ███████╗███████╗███████╗██████╗ ████████╗\n")
-		fmt.Printf("  ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗╚══██╔══╝\n")
-		fmt.Printf("  ██║  ██║█████╗  ███████╗█████╗  ██████╔╝   ██║\n")
-		fmt.Printf("  ██║  ██║██╔══╝  ╚════██║██╔══╝  ██╔══██╗   ██║\n")
-		fmt.Printf("  ██████╔╝███████╗███████║███████╗██║  ██║   ██║\n")
-		fmt.Printf("  ╚═════╝ ╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝\n")
-		fmt.Printf("\n")
-		fmt.Printf("  RPG · 2087 · Deserto Digital\n")
-		fmt.Printf("  ──────────────────────────────────────────────────\n")
-		fmt.Printf("  Servidor:  http://localhost:%s\n", port)
-		fmt.Printf("  Frontend:  http://localhost:%s\n", port)
-		fmt.Printf("  API Base:  http://localhost:%s/api\n", port)
-		fmt.Printf("  Web Dir:   %s\n", webDir)
-		fmt.Printf("  ──────────────────────────────────────────────────\n\n")
-
+		fmt.Printf("\n  ⚔  CRYPTO DESERT — RPG 2087\n")
+		fmt.Printf("  ──────────────────────────────\n")
+		fmt.Printf("  http://localhost:%s\n\n", port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("[server] fatal: %v", err)
 		}
 	}()
 
-	// ── Graceful Shutdown ─────────────────────────────────────────────────────
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Println("[server] shutting down gracefully...")
+	log.Println("[main] encerrando servidor...")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("[server] forced shutdown: %v", err)
-	}
-	log.Println("[server] stopped.")
+	srv.Shutdown(ctx)
+	log.Println("[main] encerrado.")
 }
 
 func envOr(key, fallback string) string {
