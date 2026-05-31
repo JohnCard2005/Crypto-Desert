@@ -16,6 +16,16 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, webDir string) {
 	fs := http.FileServer(http.Dir(webDir))
 	mux.Handle("/", fs)
 
+	// ── Auth ────────────────────────────────────────────────────────────────
+	mux.HandleFunc("/api/auth/register", chain(h.Register, onlyPOST))
+	mux.HandleFunc("/api/auth/login",    chain(h.Login,    onlyPOST))
+	mux.HandleFunc("/api/auth/logout",   chain(h.Logout,   onlyPOST))
+	mux.HandleFunc("/api/auth/me",       chain(h.Me,       onlyGET))
+
+	// ── Ranking ──────────────────────────────────────────────────────────────
+	// GET /api/ranking?by=level|gold|battles&limit=10
+	mux.HandleFunc("/api/ranking", chain(h.GetRanking, onlyGET))
+
 	// ── Crypto ───────────────────────────────────────────────────────────────
 	// GET /api/crypto
 	mux.HandleFunc("/api/crypto", chain(h.GetCryptoPrices, onlyGET))
@@ -114,6 +124,8 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, webDir string) {
 			onlyPOST(h.MissionConfirm)(w, r)
 		case strings.HasSuffix(path, "/replay"):
 			onlyPOST(h.ReplayMission)(w, r)
+		case strings.HasSuffix(path, "/start-wave"):
+			onlyPOST(h.StartWave)(w, r)
 		case strings.HasSuffix(path, "/ng"):
 			onlyPOST(h.StartNG)(w, r)
 		case strings.HasSuffix(path, "/use-item"):

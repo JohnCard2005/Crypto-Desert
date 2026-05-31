@@ -6,7 +6,11 @@ import (
 	"crypto-desert/internal/characters"
 )
 
-func RollD20() int { return rand.Intn(20) + 1 }
+// ── Dice ─────────────────────────────────────────────────────────────────────
+
+func RollD20() int {
+	return rand.Intn(20) + 1
+}
 
 func RollDice(sides int) int {
 	if sides <= 0 {
@@ -15,7 +19,14 @@ func RollDice(sides int) int {
 	return rand.Intn(sides) + 1
 }
 
-// CryptoFactor converte variação percentual em multiplicador de dano [0.5, 2.0]
+// ── Crypto Factor ─────────────────────────────────────────────────────────────
+
+// CryptoFactor converts a percentage variation into a damage multiplier.
+// Clamped to [0.5, 2.0] to prevent absurd results.
+//
+//	+100% variation → factor 2.0 (double damage)
+//	   0% variation → factor 1.0 (normal)
+//	 -50% variation → factor 0.5 (minimum)
 func CryptoFactor(variation float64) float64 {
 	factor := 1.0 + (variation / 100.0)
 	if factor < 0.5 {
@@ -27,32 +38,44 @@ func CryptoFactor(variation float64) float64 {
 	return factor
 }
 
+// ── Attack Resolution ─────────────────────────────────────────────────────────
+
+// AttackOutcome describes the full result of a single attack roll
 type AttackOutcome string
 
 const (
-	OutcomeCriticalMiss AttackOutcome = "critical_miss"
-	OutcomeMiss         AttackOutcome = "miss"
-	OutcomeHit          AttackOutcome = "hit"
-	OutcomeCriticalHit  AttackOutcome = "critical_hit"
+	OutcomeCriticalMiss AttackOutcome = "critical_miss" // roll = 1
+	OutcomeMiss         AttackOutcome = "miss"          // hit < target CA
+	OutcomeHit          AttackOutcome = "hit"           // normal hit
+	OutcomeCriticalHit  AttackOutcome = "critical_hit"  // roll = 20
 )
 
+// AttackResult holds everything that happened in one attack action
 type AttackResult struct {
 	Outcome      AttackOutcome
-	Roll         int
-	HitValue     int
-	Damage       int
-	CryptoFactor float64
+	Roll         int     // raw d20 result
+	HitValue     int     // roll + attack modifier
+	Damage       int     // final damage dealt (0 on miss)
+	CryptoFactor float64 // the factor applied
 	IsCrit       bool
 }
 
-// ResolveAttack executa um ataque completo usando stats efetivos (base + equipamento + status)
+// ResolveAttack performs a full attack from attacker → defender.
+// It reads DamageDice, StrengthMod, EffectiveCA, and CryptoVariation directly
+// from the Character structs. critMultiplier is 1.0 for normal, 2.0 for crit,
+// 3.0 for special abilities like Warrior's Fúria.
 func ResolveAttack(attacker, defender *characters.Character, critMultiplier float64) AttackResult {
 	roll := RollD20()
 
+	// Critical miss — automatic failure
 	if roll == 1 {
-		return AttackResult{Outcome: OutcomeCriticalMiss, Roll: roll}
+		return AttackResult{
+			Outcome: OutcomeCriticalMiss,
+			Roll:    roll,
+		}
 	}
 
+	// Critical hit — bypass CA, double (or more) damage
 	if roll == 20 {
 		if critMultiplier < 2.0 {
 			critMultiplier = 2.0
@@ -69,9 +92,14 @@ func ResolveAttack(attacker, defender *characters.Character, critMultiplier floa
 		}
 	}
 
+	// Normal attack — check against defender's CA
 	hitValue := roll + attacker.EffectiveAttackMod()
 	if hitValue < defender.EffectiveCA() {
-		return AttackResult{Outcome: OutcomeMiss, Roll: roll, HitValue: hitValue}
+		return AttackResult{
+			Outcome:  OutcomeMiss,
+			Roll:     roll,
+			HitValue: hitValue,
+		}
 	}
 
 	dmg := calculateFinalDamage(attacker, defender, critMultiplier)
@@ -85,29 +113,31 @@ func ResolveAttack(attacker, defender *characters.Character, critMultiplier floa
 	}
 }
 
-// calculateFinalDamage usa stats efetivos (com bônus de equipamento)
-// e aplica o CryptoFactorBonus do equipamento antes do clamp final.
+// calculateFinalDamage computes the actual damage value following the spec formula:
+//
+//	dado_dano  = rolar(dado_da_classe)
+//	dano_bruto = (dado_dano + mod_forca) * fator_cripto * critMultiplier * statusMult
+//	dano_final = max(1, dano_bruto - defesa_alvo)
 func calculateFinalDamage(attacker, defender *characters.Character, critMultiplier float64) int {
+	// Roll the class damage die
 	diceRoll := RollDice(attacker.DamageDice)
 
+	// Get crypto factor, then apply any status multipliers on top
 	mods := attacker.GetCombatModifiers()
+	cryptoFact := CryptoFactor(attacker.CryptoVariation) * mods.CryptoMult
 
-	// Fator crypto base + bônus de acessório
-	baseVariation := attacker.CryptoVariation + attacker.CryptoFactorBonus*100
-	cryptoFact := CryptoFactor(baseVariation) * mods.CryptoMult
-
+	// Clamp after status multiplication
 	if cryptoFact < 0.5 {
 		cryptoFact = 0.5
 	}
 	if cryptoFact > 3.0 {
-		cryptoFact = 3.0
+		cryptoFact = 3.0 // bosses can push this high
 	}
 
-	// Usa EffectiveStrengthMod (base + equipamento)
-	rawDamage := float64(diceRoll+attacker.EffectiveStrengthMod()) * cryptoFact * critMultiplier
+	rawDamage := float64(diceRoll+attacker.StrengthMod) * cryptoFact * critMultiplier
 
-	// Subtrai defesa efetiva do defensor (base + equipamento)
-	final := int(rawDamage) - defender.EffectiveDefense()
+	// Subtract defender's flat defense
+	final := int(rawDamage) - defender.Defense
 	if final < 1 {
 		return 1
 	}

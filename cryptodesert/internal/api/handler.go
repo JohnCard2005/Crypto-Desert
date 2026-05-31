@@ -15,15 +15,19 @@ import (
 	"crypto-desert/internal/game"
 	"crypto-desert/internal/items"
 	"crypto-desert/internal/missions"
+	"crypto-desert/internal/auth"
 	"crypto-desert/internal/store"
 )
 
 // Handler agrupa todas as dependências dos handlers HTTP
 type Handler struct {
-	chars     *store.CharacterStore
-	battles   *store.BattleStore
-	runners   *store.RunnerStore
+	chars       *store.CharacterStore
+	battles     *store.BattleStore
+	runners     *store.RunnerStore
 	inventories *store.InventoryStore
+	progress    *store.ProgressStore
+	ranking     *store.RankingStore
+	auth        *auth.Service
 	crypto    *CryptoService
 }
 
@@ -32,9 +36,12 @@ func NewHandler(
 	battles *store.BattleStore,
 	runners *store.RunnerStore,
 	inventories *store.InventoryStore,
+	progress *store.ProgressStore,
+	ranking *store.RankingStore,
+	authSvc *auth.Service,
 	crypto *CryptoService,
 ) *Handler {
-	return &Handler{chars, battles, runners, inventories, crypto}
+	return &Handler{chars, battles, runners, inventories, progress, ranking, authSvc, crypto}
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -99,7 +106,6 @@ func (h *Handler) GetClasses(w http.ResponseWriter, r *http.Request) {
 
 	result := make([]ClassInfoResponse, 0, len(classBases))
 	for key, base := range classBases {
-		ability := characters.ClassAbilities[key]
 		faction := characters.Factions[characters.Faction(base.faction)]
 		cryptoFactor := h.crypto.GetFactor(faction.Crypto)
 
@@ -116,8 +122,6 @@ func (h *Handler) GetClasses(w http.ResponseWriter, r *http.Request) {
 			Defense:         base.def,
 			Speed:           base.spd,
 			DamageDice:      base.dice,
-			AbilityName:     ability.Name,
-			AbilityDesc:     ability.Description,
 			CryptoFactor:    cryptoFactor,
 			CryptoVariation: h.crypto.GetChange7d(faction.Crypto),
 		})
@@ -133,6 +137,11 @@ func (h *Handler) GetClasses(w http.ResponseWriter, r *http.Request) {
 // POST /api/characters
 // Cria um novo personagem. Body: {"name":"...","class":"..."}
 func (h *Handler) CreateCharacter(w http.ResponseWriter, r *http.Request) {
+	userID, _, err := h.userFromRequest(r)
+	if err != nil {
+		writeError(w, http.StatusUnauthorized, "faça login para criar um personagem")
+		return
+	}
 	var req CreateCharacterRequest
 	if err := readJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, "JSON inválido: "+err.Error())
@@ -153,7 +162,13 @@ func (h *Handler) CreateCharacter(w http.ResponseWriter, r *http.Request) {
 	faction := characters.Factions[c.Faction]
 	c.CryptoVariation = h.crypto.GetChange7d(faction.Crypto)
 
-	h.chars.Create(c)
+	// Vincula ao usuário logado
+	c.UserID = userID
+
+	if err := h.chars.Create(c); err != nil {
+		writeError(w, http.StatusInternalServerError, "erro ao criar personagem: "+err.Error())
+		return
+	}
 
 	// Cria inventário vazio para o personagem
 	h.inventories.Set(c.ID, items.NewInventory(c.ID))
@@ -164,10 +179,27 @@ func (h *Handler) CreateCharacter(w http.ResponseWriter, r *http.Request) {
 // GET /api/characters
 // Lista todos os personagens com dados crypto ao vivo.
 func (h *Handler) ListCharacters(w http.ResponseWriter, r *http.Request) {
-	list := h.chars.List()
-	result := make([]CharacterResponse, len(list))
-	for i, c := range list {
-		result[i] = CharToResponse(c, h.crypto)
+	userID, _, err := h.userFromRequest(r)
+	if err != nil {
+		writeError(w, http.StatusUnauthorized, "faça login para ver seus personagens")
+		return
+	}
+	list, _ := h.chars.ListByUser(userID)
+	result := make([]CharacterResponse, 0, len(list))
+	for _, c := range list {
+		// Aplica bônus de equipamento antes de serializar
+		if inv := h.inventories.Get(c.ID); inv != nil {
+			b := inv.TotalBonuses()
+			c.BonusAttackMod = b.AttackMod
+			c.BonusStrengthMod = b.StrengthMod
+			c.BonusCA = b.CA
+			c.BonusDefense = b.Defense
+			c.BonusSpeed = b.Speed
+			c.BonusMaxHP = b.MaxHP
+			c.BonusMaxMana = b.MaxMana
+			c.CryptoFactorBonus = b.CryptoFactorBonus
+		}
+		result = append(result, CharToResponse(c, h.crypto))
 	}
 	writeJSON(w, http.StatusOK, result)
 }
@@ -702,10 +734,31 @@ func (h *Handler) EquipItem(w http.ResponseWriter, r *http.Request) {
 
 // ── Shop ──────────────────────────────────────────────────────────────────────
 
-// GET /api/shop/{city_id}
-// Retorna o estoque da loja de uma cidade com preços crypto-dinâmicos.
+// GET /api/shop/{city_id}?character_id=1
+// Retorna o estoque da loja. Bloqueia se a cidade não foi desbloqueada pelo personagem.
 func (h *Handler) GetShop(w http.ResponseWriter, r *http.Request) {
 	cityID := pathStr(r, "/api/shop/")
+
+	// Verifica se o personagem tem acesso à cidade desta loja
+	charIDStr := r.URL.Query().Get("character_id")
+	if charIDStr != "" {
+		charID, _ := strconv.Atoi(charIDStr)
+		if charID > 0 {
+			if pp := h.progress.Get(charID); pp != nil {
+				var city *missions.City
+				for _, c := range missions.Campaign {
+					if c.ID == cityID {
+						city = &c
+						break
+					}
+				}
+				if city != nil && !pp.CityUnlocked(*city) {
+					writeError(w, http.StatusForbidden, "cidade ainda bloqueada — complete a missão anterior primeiro")
+					return
+				}
+			}
+		}
+	}
 
 	// Descobre a facção da cidade para pegar o fator crypto correto
 	cityFaction := cityFactionMap[cityID]
@@ -1075,6 +1128,158 @@ func (h *Handler) UseItemInBattle(w http.ResponseWriter, r *http.Request) {
 	})
 
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
+}
+
+
+// POST /api/missions/session/{session_id}/start-wave
+// Inicia uma wave específica. Body: {"wave_id": "genesis_w1"}
+// Usado para replay — o jogador escolhe qual wave jogar diretamente.
+func (h *Handler) StartWave(w http.ResponseWriter, r *http.Request) {
+	sessionID := strings.TrimSuffix(pathStr(r, "/api/missions/session/"), "/start-wave")
+	runner, err := h.runners.Get(sessionID)
+	if err != nil {
+		writeError(w, http.StatusNotFound, "sessão não encontrada")
+		return
+	}
+
+	var req struct {
+		WaveID string `json:"wave_id"`
+	}
+	if err := readJSON(r, &req); err != nil {
+		writeError(w, http.StatusBadRequest, "JSON inválido: "+err.Error())
+		return
+	}
+	if req.WaveID == "" {
+		writeError(w, http.StatusBadRequest, "wave_id é obrigatório")
+		return
+	}
+
+	if err := runner.StartWave(req.WaveID); err != nil {
+		writeError(w, http.StatusConflict, err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
+}
+
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+
+// POST /api/auth/register
+func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := readJSON(r, &req); err != nil {
+		writeError(w, http.StatusBadRequest, "JSON inválido")
+		return
+	}
+	user, err := h.auth.Register(req.Username, req.Password)
+	if err != nil {
+		writeError(w, http.StatusConflict, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusCreated, map[string]any{
+		"user": user,
+		"message": "Conta criada com sucesso! Faça login para continuar.",
+	})
+}
+
+// POST /api/auth/login
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := readJSON(r, &req); err != nil {
+		writeError(w, http.StatusBadRequest, "JSON inválido")
+		return
+	}
+	user, token, err := h.auth.Login(req.Username, req.Password)
+	if err != nil {
+		writeError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	// Token no cookie HTTP-only (mais seguro que localStorage)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "cd_token",
+		Value:    token,
+		Path:     "/",
+		MaxAge:   30 * 24 * 60 * 60, // 30 dias
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	writeJSON(w, http.StatusOK, map[string]any{
+		"user":    user,
+		"token":   token, // também no body para o frontend guardar
+		"message": "Login realizado com sucesso!",
+	})
+}
+
+// POST /api/auth/logout
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "cd_token",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+	writeJSON(w, http.StatusOK, map[string]string{"message": "Logout realizado."})
+}
+
+// GET /api/auth/me — retorna o usuário logado
+func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
+	userID, username, err := h.userFromRequest(r)
+	if err != nil {
+		writeError(w, http.StatusUnauthorized, "não autenticado")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"id":       userID,
+		"username": username,
+	})
+}
+
+// userFromRequest extrai o usuário do token (cookie ou header Authorization).
+func (h *Handler) userFromRequest(r *http.Request) (int, string, error) {
+	// Tenta cookie primeiro
+	if cookie, err := r.Cookie("cd_token"); err == nil {
+		return h.auth.UserFromRequest(cookie.Value)
+	}
+	// Fallback: header Authorization: Bearer <token>
+	authHeader := r.Header.Get("Authorization")
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		return h.auth.UserFromRequest(authHeader[7:])
+	}
+	return 0, "", fmt.Errorf("não autenticado")
+}
+
+// ── Ranking ───────────────────────────────────────────────────────────────────
+
+// GET /api/ranking?by=level&limit=10
+func (h *Handler) GetRanking(w http.ResponseWriter, r *http.Request) {
+	by    := r.URL.Query().Get("by")
+	limit := 10
+	if l := r.URL.Query().Get("limit"); l != "" {
+		fmt.Sscan(l, &limit)
+	}
+	if limit > 50 { limit = 50 }
+
+	var entries []store.RankingEntry
+	switch by {
+	case "gold":
+		entries = h.ranking.TopByGold(limit)
+	case "battles":
+		entries = h.ranking.TopByBattles(limit)
+	default:
+		entries = h.ranking.TopByLevel(limit)
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"by":      by,
+		"entries": entries,
+	})
 }
 
 // cityFactionMap mapeia city_id → símbolo de facção

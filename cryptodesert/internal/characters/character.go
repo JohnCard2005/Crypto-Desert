@@ -5,6 +5,7 @@ package characters
 type Character struct {
 	// Identity
 	ID      int
+	UserID  int    // dono do personagem (usado pelo sistema de auth)
 	Name    string
 	Class   string
 	Faction Faction

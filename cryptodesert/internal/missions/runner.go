@@ -105,7 +105,7 @@ func (r *Runner) StartNG() error {
 	return nil
 }
 
-// ReplayMission reinicia uma missão já concluída para replay.
+// ReplayMission reinicia uma missão já concluída (ou parcialmente feita) para replay.
 // Mantém o personagem no mesmo estado (HP, gold, items) — só reseta o progresso da missão.
 func (r *Runner) ReplayMission() error {
 	if r.ActiveCity == nil {
@@ -127,6 +127,42 @@ func (r *Runner) ReplayMission() error {
 	r.WaveXP = 0
 	r.WaveGold = 0
 	r.logEvent(PhaseWaveIntro, fmt.Sprintf("Replay: %s — Wave: %s", r.ActiveCity.Name, wave.Title))
+	return nil
+}
+
+
+// StartWave inicia uma wave específica da cidade ativa pelo ID.
+// Usado no modo replay para o jogador escolher qual wave jogar.
+func (r *Runner) StartWave(waveID string) error {
+	if r.ActiveCity == nil {
+		return fmt.Errorf("nenhuma cidade ativa")
+	}
+	var targetWave *Wave
+	for i := range r.ActiveCity.Mission.Waves {
+		w := &r.ActiveCity.Mission.Waves[i]
+		if w.ID == waveID {
+			targetWave = w
+			break
+		}
+	}
+	if targetWave == nil {
+		return fmt.Errorf("wave %q não encontrada", waveID)
+	}
+	mp, err := r.Progress.MissionState(r.ActiveCity.Mission.ID)
+	if err != nil {
+		return err
+	}
+	wp, ok := mp.Waves[waveID]
+	if !ok || wp.Status == WaveStatusLocked {
+		return fmt.Errorf("wave ainda bloqueada")
+	}
+	r.ActiveWave = targetWave
+	r.Phase = PhaseWaveIntro
+	r.Message = targetWave.Intro
+	r.EnemyQueue = nil
+	r.Battle = nil
+	r.WaveXP = 0
+	r.WaveGold = 0
 	return nil
 }
 
@@ -385,6 +421,11 @@ func (r *Runner) resolveWaveCleared() error {
 	r.Battle = nil
 	r.EnemyQueue = nil // limpa fila para não mostrar inimigos antigos no próximo intro
 
+	// Aplica XP ao personagem — aqui é onde o level up acontece de verdade
+	if r.WaveXP > 0 {
+		r.Player.GainXP(r.WaveXP)
+	}
+
 	// Registra o clear no progresso
 	r.Progress.RecordWaveCleared(
 		*r.ActiveCity,
@@ -486,6 +527,15 @@ func (r *Runner) RetryWave() error {
 }
 
 // ── Estado de apresentação ────────────────────────────────────────────────────
+
+// UpdatedAt retorna quando o runner foi atualizado pela última vez.
+// Usado para limpeza de sessões inativas.
+func (r *Runner) UpdatedAt() time.Time {
+	if r.Progress != nil {
+		return r.Progress.UpdatedAt
+	}
+	return time.Time{}
+}
 
 // Snapshot retorna uma visão completa do estado atual para a UI renderizar.
 func (r *Runner) Snapshot() RunnerSnapshot {

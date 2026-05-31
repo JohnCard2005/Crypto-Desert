@@ -53,6 +53,33 @@ type CharacterResponse struct {
 	CryptoFactor    float64 `json:"crypto_factor"`    // fator de dano [0.5, 2.0]
 
 	Ability  AbilityResponse  `json:"ability"`
+
+	// Habilidade 1 — campos flat para o inventário/roster
+	AbilityName      string `json:"ability_name"`
+	AbilityDesc      string `json:"ability_desc"`
+	AbilityAvailable bool   `json:"ability_available"`
+
+	// Habilidade 2
+	Ability2Name     string `json:"ability2_name"`
+	Ability2Desc     string `json:"ability2_desc"`
+	Ability2Unlocked bool   `json:"ability2_unlocked"`
+
+	// Habilidade 3
+	Ability3Name     string `json:"ability3_name"`
+	Ability3Desc     string `json:"ability3_desc"`
+	Ability3Unlocked bool   `json:"ability3_unlocked"`
+
+	// Passivas
+	Passive1Name     string `json:"passive1_name"`
+	Passive1Desc     string `json:"passive1_desc"`
+	Passive1Unlocked bool   `json:"passive1_unlocked"`
+	Passive2Name     string `json:"passive2_name"`
+	Passive2Desc     string `json:"passive2_desc"`
+	Passive2Unlocked bool   `json:"passive2_unlocked"`
+	Passive3Name     string `json:"passive3_name"`
+	Passive3Desc     string `json:"passive3_desc"`
+	Passive3Unlocked bool   `json:"passive3_unlocked"`
+
 	Statuses []StatusResponse `json:"statuses"`
 	Alive    bool             `json:"alive"`
 }
@@ -91,10 +118,8 @@ type ClassInfoResponse struct {
 	Defense         int     `json:"defense"`
 	Speed           int     `json:"speed"`
 	DamageDice      int     `json:"damage_dice"`
-	AbilityName     string  `json:"ability_name"`
-	AbilityDesc     string  `json:"ability_desc"`
-	CryptoFactor    float64 `json:"crypto_factor"`    // fator atual da facção
-	CryptoVariation float64 `json:"crypto_variation"` // variação 7d em %
+	CryptoFactor    float64 `json:"crypto_factor"`
+	CryptoVariation float64 `json:"crypto_variation"`
 }
 
 // ── Enemy DTOs ────────────────────────────────────────────────────────────────
@@ -232,6 +257,28 @@ func CharToResponse(c *characters.Character, cs *CryptoService) CharacterRespons
 			Used:         c.AbilityUsed,
 			Available:    c.CanUseAbility(),
 		},
+		// Habilidade 1 (flat fields para o inventário)
+		AbilityName:      c.Ability.Name,
+		AbilityDesc:      c.Ability.Description,
+		AbilityAvailable: c.CanUseAbility(),
+		// Habilidade 2
+		Ability2Name:     c.Ability2.Name,
+		Ability2Desc:     c.Ability2.Description,
+		Ability2Unlocked: c.Ability2.Unlocked,
+		// Habilidade 3
+		Ability3Name:     c.Ability3.Name,
+		Ability3Desc:     c.Ability3.Description,
+		Ability3Unlocked: c.Ability3.Unlocked,
+		// Passivas
+		Passive1Name:     c.Passive1.Name,
+		Passive1Desc:     c.Passive1.Description,
+		Passive1Unlocked: c.Passive1.Unlocked,
+		Passive2Name:     c.Passive2.Name,
+		Passive2Desc:     c.Passive2.Description,
+		Passive2Unlocked: c.Passive2.Unlocked,
+		Passive3Name:     c.Passive3.Name,
+		Passive3Desc:     c.Passive3.Description,
+		Passive3Unlocked: c.Passive3.Unlocked,
 		Statuses: statuses,
 		Alive:    c.Alive,
 	}

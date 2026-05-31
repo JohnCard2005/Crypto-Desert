@@ -42,7 +42,7 @@ var defaultPrices = map[string]CryptoPrice{
 func NewCryptoService() *CryptoService {
 	cs := &CryptoService{
 		prices: copyDefaults(),
-		ttl:    2 * time.Minute,
+		ttl:    5 * time.Minute,
 	}
 	// Fetch on startup in background
 	go func() {
@@ -121,6 +121,14 @@ func (cs *CryptoService) fetch() error {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == 429 {
+		log.Printf("[crypto] rate limited by CoinGecko (429) — mantendo valores anteriores")
+		// Atualiza lastFetch para evitar spam de requisições
+		cs.mu.Lock()
+		cs.lastFetch = time.Now()
+		cs.mu.Unlock()
+		return fmt.Errorf("rate limited")
+	}
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status %d", resp.StatusCode)
 	}
@@ -146,13 +154,19 @@ func (cs *CryptoService) fetch() error {
 
 	for id, data := range raw {
 		change7d := data["usd_7d_change"]
-		factor := 1.0 + (change7d / 100.0)
+
+		// Amplifica a variação × 3 para ter impacto real no gameplay.
+		// Ex: +5% real → fator 1.15 (+15% dano) em vez de 1.05 (+5%)
+		// Ex: -8% real → fator 0.76 (-24% dano) — penalidade sentida
+		amplified := change7d * 3.0
+		factor := 1.0 + (amplified / 100.0)
 		if factor < 0.5 {
 			factor = 0.5
 		}
 		if factor > 2.0 {
 			factor = 2.0
 		}
+
 		cs.prices[id] = CryptoPrice{
 			ID:         id,
 			Symbol:     symbols[id],

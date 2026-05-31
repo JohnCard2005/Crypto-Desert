@@ -149,9 +149,10 @@ func (pp *PlayerProgress) ActiveWaveFor(city City) (*Wave, *WaveProgress, error)
 	for i := range city.Mission.Waves {
 		w := &city.Mission.Waves[i]
 		wp := mp.Waves[w.ID]
-		if wp.Status == WaveStatusAvailable { return w, wp, nil }
+		if wp != nil && wp.Status == WaveStatusAvailable { return w, wp, nil }
 	}
-	if mp.Cleared { return nil, nil, fmt.Errorf("missão já concluída") }
+	// Nenhuma wave Available — missão concluída normalmente (não em replay)
+	if mp.Cleared { return nil, nil, fmt.Errorf("missão já concluída. Use replay") }
 	return nil, nil, fmt.Errorf("nenhuma wave disponível")
 }
 
@@ -195,7 +196,10 @@ func (pp *PlayerProgress) RecordWaveCleared(city City, waveID string, xp, gold i
 				}
 				mp.ActiveWave = nextID
 			} else {
-				pp.recordMissionCleared(city, mp)
+				// Só registra mission cleared se ainda não tinha sido concluída antes
+				if !mp.Cleared {
+					pp.recordMissionCleared(city, mp)
+				}
 			}
 			break
 		}
@@ -249,16 +253,25 @@ func (pp *PlayerProgress) StartNewGame() error {
 func (pp *PlayerProgress) ReplayMission(city City) error {
 	mp, err := pp.MissionState(city.Mission.ID)
 	if err != nil { return err }
-	if !mp.Cleared { return fmt.Errorf("missão ainda não concluída") }
-	// Missão já foi concluída: todas as waves ficam disponíveis para replay
-	// O jogador já provou que consegue completar todas — não faz sentido bloquear
+	// Permite replay se ao menos 1 wave foi concluída (não precisa ter matado o boss)
+	hasCleared := false
+	for _, wp := range mp.Waves {
+		if wp.Status == WaveStatusCleared {
+			hasCleared = true
+			break
+		}
+	}
+	if !hasCleared {
+		return fmt.Errorf("complete ao menos uma wave antes de repetir a missão")
+	}
+	// Replay: todas as waves ficam Available para o jogador escolher.
+	// mp.Cleared permanece true — isso garante que cidades desbloqueadas
+	// pela conclusão desta missão continuam acessíveis.
 	for _, wave := range city.Mission.Waves {
 		mp.Waves[wave.ID] = &WaveProgress{WaveID: wave.ID, Status: WaveStatusAvailable}
 	}
-	mp.Cleared = false
+	// mp.Cleared NÃO é alterado — preserva desbloqueio de cidades seguintes
 	mp.ActiveWave = city.Mission.Waves[0].ID
-	mp.TotalXP = 0
-	mp.TotalGold = 0
 	pp.UpdatedAt = time.Now()
 	return nil
 }
