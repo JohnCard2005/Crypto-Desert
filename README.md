@@ -1,131 +1,137 @@
-# ⚔ Crypto Desert
+# ⚔️ Crypto Desert
 
-> RPG de turnos ambientado em 2087, onde o poder dos personagens flutua conforme o mercado de criptomoedas.
+> RPG de turnos inspirado em RPGs clássicos, onde o poder dos personagens é influenciado em tempo real pelo mercado de criptomoedas.
 
-### Trabalho Final — Estrutura de Dados II
+![Go](https://img.shields.io/badge/Go-1.24-00ADD8?logo=go)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)
+![License](https://img.shields.io/badge/Academic_Project-AEMS-blue)
 
-**Curso:** Engenharia da Computação – 5º Período
-**Instituição:** Faculdade AEMS – Três Lagoas/MS
+---
+
+# 📚 Trabalho Acadêmico
+
+**Disciplina:** Estrutura de Dados II  
+**Curso:** Engenharia da Computação – 5º Período  
+**Instituição:** Faculdade AEMS – Três Lagoas/MS  
 **Professor:** Bruno Gabriel
 
-### Equipe
+## 👨‍💻 Integrantes
 
-* Samuel Medeiros
-* João Cardoso
-* Robert
-* Rafael
-* Caio Lopes
-* Mahgid Thomé
-* Alberto Suave
-
-[![Go 1.24](https://img.shields.io/badge/Go-1.24-00ADD8?logo=go)](https://go.dev/)
-[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)](https://hub.docker.com/)
+- Samuel Medeiros
+- João Cardoso
+- Robert
+- Rafael
+- Caio Lopes
+- Mahgid Thomé
+- Alberto Suave
 
 ---
 
-# 📑 Sumário
+# 📖 Sumário
 
-* [Descrição](#-descrição)
-* [Narrativa](#-narrativa)
-* [Funcionalidades](#-funcionalidades)
-* [Arquitetura](#-arquitetura)
-* [Estruturas de Dados Utilizadas](#-estruturas-de-dados-utilizadas)
-* [Stack](#-stack)
-* [Estrutura do Projeto](#-estrutura-do-projeto)
-* [Pré-requisitos](#-pré-requisitos)
-* [Instalação e Execução](#-instalação-e-execução)
-
-  * [Docker](#docker-recomendado)
-  * [Execução Local](#local-sem-docker)
-* [Endpoints da API](#-endpoints-da-api)
-* [Variáveis de Ambiente](#-variáveis-de-ambiente)
-* [Exemplo de Uso da API](#-exemplo-de-uso-da-api)
-* [Equipe](#-equipe)
-* [Licença](#-licença)
+- Sobre o Projeto
+- Narrativa
+- Funcionalidades
+- Tecnologias Utilizadas
+- Arquitetura
+- Estruturas de Dados
+- Mecânica de Combate
+- Facções
+- Classes Jogáveis
+- Integração com API
+- Persistência
+- Estrutura do Projeto
+- Instalação
+- Docker
+- Endpoints
+- Variáveis de Ambiente
+- Testes
+- Controle de Versão
+- Equipe
 
 ---
 
-# 📖 Descrição
+# 🎮 Sobre o Projeto
 
-**Crypto Desert** é um RPG de turnos ambientado em um deserto digital pós-apocalíptico no ano de 2087.
+Crypto Desert é um RPG de turnos ambientado em um universo pós-apocalíptico digital, onde facções dominam blockchains privadas e guerreiros extraem poder diretamente da valorização de suas criptomoedas.
 
-Cinco facções disputam o controle das blockchains sobreviventes:
-
-* ₿ BTC
-* Ξ ETH
-* ◎ SOL
-* BNB
-* Ð DOGE
-
-O diferencial do jogo é que o dano dos personagens é influenciado pela valorização ou desvalorização real das criptomoedas associadas à sua facção.
-
-As cotações são obtidas em tempo real através da CoinGecko API, tornando cada batalha única.
-
-### Impacto do Mercado
-
-* 🔥 **Bull Run:** fator de dano de até **2.0x**
-* 📉 **Bear Market:** fator de dano mínimo de **0.5x**
-* 🌐 Atualização automática via API em tempo real
+O principal diferencial do jogo é a integração em tempo real com o mercado de criptomoedas. A valorização ou desvalorização de cada ativo influencia diretamente os atributos de combate dos personagens.
 
 ---
 
 # 🌍 Narrativa
 
-No ano de 2087, os governos colapsaram e o controle do mundo foi transferido para facções que dominam blockchains privadas espalhadas pelo Deserto Digital.
+No ano de 2087, os governos colapsaram e o controle global foi assumido por facções que dominam blockchains privadas espalhadas pelo Deserto Digital.
 
-Cada facção possui sua própria moeda e seus guerreiros extraem poder diretamente da valorização de seus ativos. Nesse mundo, o mercado dita a força dos combatentes.
+Cada facção possui sua própria moeda e recruta guerreiros cujo poder depende diretamente do desempenho de seus ativos no mercado.
 
 > "Aqui, seu poder não vem do treinamento. Vem do mercado."
 
-O jogador atravessa cidades, enfrenta inimigos, derrota chefes e evolui seu personagem enquanto explora um universo onde economia e combate são inseparáveis.
+O jogador atravessa cidades, enfrenta ondas de inimigos, derrota chefes e evolui seu personagem em uma jornada onde economia e combate estão diretamente conectados.
 
 ---
 
 # 🚀 Funcionalidades
 
-| Sistema                               | Status |
-| ------------------------------------- | ------ |
-| Criação de personagens (5 classes)    | ✅      |
-| Combate por turnos com d20            | ✅      |
-| Fator de dano baseado em criptomoedas | ✅      |
-| IA inimiga com 5 comportamentos       | ✅      |
-| Sistema de missões com 5 cidades      | ✅      |
-| Progressão de nível e experiência     | ✅      |
-| Inventário e equipamentos             | ✅      |
-| Loja com preços dinâmicos             | ✅      |
-| Campfire (sistema de descanso)        | ✅      |
-| New Game Plus (NG+)                   | ✅      |
+| Sistema | Status |
+|----------|----------|
+| Sistema de Login | ✅ |
+| Criação de Personagens | ✅ |
+| 5 Classes Jogáveis | ✅ |
+| 5 Facções | ✅ |
+| Combate baseado em d20 | ✅ |
+| Sistema de Habilidades | ✅ |
+| IA Inimiga | ✅ |
+| Sistema de Missões | ✅ |
+| Progressão por Nível | ✅ |
+| Inventário | ✅ |
+| Equipamentos | ✅ |
+| Loja Dinâmica | ✅ |
+| Campfire | ✅ |
+| Ranking Global | ✅ |
+| New Game Plus | ✅ |
+| Integração com API de Criptomoedas | ✅ |
+| Persistência SQLite | ✅ |
 
 ---
 
-# 🏗 Arquitetura
+# 🛠️ Tecnologias Utilizadas
 
-O projeto foi desenvolvido utilizando arquitetura em camadas para garantir separação de responsabilidades, organização do código e facilidade de manutenção.
+| Camada | Tecnologia |
+|----------|----------|
+| Backend | Go 1.24 |
+| Frontend | HTML + CSS + JavaScript |
+| Banco de Dados | SQLite |
+| API Externa | CoinGecko |
+| Containerização | Docker |
+| Controle de Versão | Git + GitHub |
+
+---
+
+# 🏗️ Arquitetura
+
+O projeto foi desenvolvido seguindo uma arquitetura em camadas.
 
 ```text
-Frontend (HTML/CSS/JS)
-          │
-          ▼
-       API REST
-          │
-          ▼
-    Motor de Jogo
-          │
- ┌────────┴────────┐
- ▼                 ▼
-Sistema       CoinGecko API
-de Dados
+Frontend
+    │
+    ▼
+API REST
+    │
+    ▼
+Motor de Jogo
+ ├─ Combate
+ ├─ Missões
+ ├─ Inventário
+ ├─ IA
+ │
+ ▼
+Persistência SQLite
+ │
+ ▼
+CoinGecko API
 ```
-
-### Camadas
-
-| Camada             | Responsabilidade                     |
-| ------------------ | ------------------------------------ |
-| Interface          | Interação com o usuário              |
-| API REST           | Comunicação entre frontend e backend |
-| Motor de Jogo      | Combate, missões, IA e progressão    |
-| Integração Externa | Consumo da CoinGecko API             |
-| Persistência       | Armazenamento dos dados do jogo      |
 
 ---
 
@@ -133,73 +139,182 @@ de Dados
 
 ## Queue (Fila)
 
-Utilizada para controlar a ordem de iniciativa durante as batalhas.
+Arquivo: `internal/combat/queue.go`
 
-**Aplicação:**
+Utilizada para gerenciar a ordem dos turnos dos combatentes.
 
-* Turnos de combate
-* Gerenciamento de ações
+### Justificativa
 
-**Complexidade:**
+A fila representa naturalmente a sequência de ações durante uma batalha por turnos.
 
-* Inserção: O(log n)
-* Remoção: O(log n)
+### Complexidade
+
+| Operação | Big O |
+|-----------|-----------|
+| Inserção | O(n) |
+| Avançar turno | O(1) |
+| Consulta | O(1) |
+| Remoção | O(n) |
 
 ---
 
 ## Hash Table
 
-Utilizada para armazenar o cache das cotações de criptomoedas.
+Implementação:
 
-**Aplicação:**
+```go
+map[string]CryptoPrice
+```
 
-* Cache da CoinGecko API
-* Busca rápida de ativos
+Utilizada para cache das cotações da CoinGecko.
 
-**Complexidade:**
+### Justificativa
 
-* Inserção: O(1)
-* Busca: O(1)
+Permite acesso rápido às cotações sem necessidade de novas consultas à API.
 
----
+### Complexidade
 
-## Listas Estruturadas
-
-Utilizadas para gerenciamento de personagens, inimigos, itens, missões e inventários.
-
-**Complexidade:**
-
-* Inserção: O(1)
-* Busca: O(n)
+| Operação | Big O |
+|-----------|-----------|
+| Busca | O(1) |
+| Inserção | O(1) |
 
 ---
 
-## Store com Mutex
+## Banco de Dados SQLite
 
-Estrutura utilizada para controle concorrente dos dados armazenados em memória.
+Utilizado para persistência de:
 
-**Objetivo:**
-
-* Garantir integridade dos dados
-* Evitar condições de corrida (Race Conditions)
+- Usuários
+- Personagens
+- Inventários
+- Ranking
+- Progresso das missões
 
 ---
 
-# 🛠 Stack
+# ⚔️ Mecânica de Combate
 
-| Camada              | Tecnologia                        |
-| ------------------- | --------------------------------- |
-| Backend / Lógica    | Go 1.24 (Standard Library)        |
-| Frontend            | HTML + CSS + JavaScript (Vanilla) |
-| API de Criptomoedas | CoinGecko                         |
-| Persistência        | In-Memory Store                   |
-| Containerização     | Docker + Docker Compose           |
+## Iniciativa
 
-### Justificativa da Stack
+```text
+iniciativa = d20 + velocidade
+```
 
-A linguagem Go foi escolhida por sua simplicidade, desempenho, suporte nativo à concorrência e facilidade para construção de APIs REST.
+## Ataque
 
-Docker foi utilizado para garantir portabilidade e padronização do ambiente de execução.
+```text
+acerto = d20 + modificador_ataque
+```
+
+O ataque acerta quando:
+
+```text
+acerto >= CA do alvo
+```
+
+## Críticos
+
+```text
+20 = Acerto Crítico
+1 = Falha Crítica
+```
+
+## Dano
+
+```text
+dano = (dado + força) × fator_crypto
+```
+
+Onde:
+
+```text
+fator_crypto = 1 + (variacao_7_dias / 100)
+```
+
+Limitado entre:
+
+```text
+0.5x e 2.0x
+```
+
+---
+
+# 🏛️ Facções
+
+## ₿ Ordem dos Blocos (BTC)
+
+Guerreiros da blockchain original.
+
+## Ξ Conclave dos Contratos (ETH)
+
+Mestres dos contratos inteligentes.
+
+## ◎ Rastreadores Solares (SOL)
+
+Especialistas em velocidade.
+
+## BNB Guilda das Taxas
+
+Mercenários focados em eficiência.
+
+## Ð Horda Lunar (DOGE)
+
+Combatentes imprevisíveis movidos por especulação.
+
+---
+
+# 🧙 Classes Jogáveis
+
+| Classe | Cripto | HP | CA | Dado | Habilidade |
+|----------|----------|----------|----------|----------|----------|
+| Warrior | BTC | 120 | 14 | d10 | Fúria do Bloco |
+| Mage | ETH | 80 | 11 | d6 | Contrato Inteligente |
+| Archer | SOL | 95 | 13 | d8 | Snipe Veloz |
+| Rogue | BNB | 90 | 12 | d8 | Ataque Sombrio |
+| Shaman | DOGE | 100 | 12 | d8 | Caos Lunar |
+
+---
+
+# 🌐 Integração com API
+
+API utilizada: CoinGecko
+
+Endpoint:
+
+```text
+https://api.coingecko.com/api/v3/simple/price
+```
+
+## Recursos implementados
+
+- Cache local
+- TTL de 5 minutos
+- Timeout de 8 segundos
+- Tratamento de Rate Limit
+- Fallback automático
+
+Caso a API esteja indisponível, o sistema utiliza a última cotação válida armazenada.
+
+---
+
+# 💾 Persistência
+
+O projeto utiliza SQLite como banco de dados principal.
+
+Entidades persistidas:
+
+- Usuários
+- Personagens
+- Inventários
+- Ranking Global
+- Progresso de Missões
+
+Banco:
+
+```text
+data/game.db
+```
 
 ---
 
@@ -208,19 +323,8 @@ Docker foi utilizado para garantir portabilidade e padronização do ambiente de
 ```text
 crypto-desert/
 ├── cmd/
-│   └── server/
-│       └── main.go
 ├── internal/
-│   ├── api/
-│   ├── characters/
-│   ├── combat/
-│   ├── enemies/
-│   ├── game/
-│   ├── items/
-│   ├── missions/
-│   └── store/
 ├── web/
-│   └── index.html
 ├── Dockerfile
 ├── docker-compose.yml
 └── go.mod
@@ -228,85 +332,27 @@ crypto-desert/
 
 ---
 
-# 📋 Pré-requisitos
+# ⚙️ Instalação
 
-### Docker
-
-* Docker ≥ 24.0
-* Docker Compose ≥ 2.0
-
-### Execução Local
-
-* Go ≥ 1.24
+```bash
+git clone https://github.com/JohnCard2005/Crypto-Desert.git
+cd Crypto-Desert
+```
 
 ---
 
-# ⚙ Instalação e Execução
-
-## Docker (Recomendado)
+# 🐳 Docker
 
 ```bash
-git clone https://github.com/seu-usuario/crypto-desert.git
-
-cd crypto-desert
-
 docker-compose up --build
 ```
 
-Acesse:
+## DockerHub
+
+Adicionar após publicação:
 
 ```text
-http://localhost:8080
-```
-
-### Executar em segundo plano
-
-```bash
-docker-compose up --build -d
-
-docker-compose logs -f
-
-docker-compose down
-```
-
----
-
-## Local (Sem Docker)
-
-```bash
-git clone https://github.com/seu-usuario/crypto-desert.git
-
-cd crypto-desert
-
-go run ./cmd/server
-```
-
-Acesse:
-
-```text
-http://localhost:8080
-```
-
-### Utilizando variáveis de ambiente
-
-```bash
-PORT=9090 WEB_DIR=./web go run ./cmd/server
-```
-
----
-
-## Testes
-
-```bash
-go test ./...
-
-go test ./internal/characters/... -v
-
-go test ./internal/game/... -v
-
-go test ./internal/items/... -v
-
-go test ./internal/missions/... -v
+docker pull SEU-USUARIO/crypto-desert
 ```
 
 ---
@@ -319,109 +365,43 @@ Base URL:
 http://localhost:8080/api
 ```
 
-## Crypto
-
-| Método | Endpoint    | Descrição                        |
-| ------ | ----------- | -------------------------------- |
-| GET    | /api/crypto | Retorna cotações e fator de dano |
-
----
-
-## Classes
-
-| Método | Endpoint     | Descrição                          |
-| ------ | ------------ | ---------------------------------- |
-| GET    | /api/classes | Lista todas as classes disponíveis |
-
----
-
-## Personagens
-
-| Método | Endpoint                             |
-| ------ | ------------------------------------ |
-| GET    | /api/characters                      |
-| POST   | /api/characters                      |
-| GET    | /api/characters/{id}                 |
-| DELETE | /api/characters/{id}                 |
-| GET    | /api/characters/{id}/inventory       |
-| POST   | /api/characters/{id}/inventory/use   |
-| POST   | /api/characters/{id}/inventory/equip |
-
----
-
-## Inimigos
-
-| Método | Endpoint     |
-| ------ | ------------ |
-| GET    | /api/enemies |
-
----
-
-## Batalhas
-
-| Método | Endpoint                      |
-| ------ | ----------------------------- |
-| POST   | /api/battles                  |
-| GET    | /api/battles/{session}        |
-| POST   | /api/battles/{session}/action |
-
----
-
-## Missões
-
-| Método | Endpoint                                 |
-| ------ | ---------------------------------------- |
-| POST   | /api/missions/session                    |
-| GET    | /api/missions/session/{id}               |
-| POST   | /api/missions/session/{id}/enter         |
-| POST   | /api/missions/session/{id}/start         |
-| POST   | /api/missions/session/{id}/battle/begin  |
-| POST   | /api/missions/session/{id}/battle/action |
-| POST   | /api/missions/session/{id}/confirm       |
-
----
-
-## Loja
-
-| Método | Endpoint                 |
-| ------ | ------------------------ |
-| GET    | /api/shop/{city_id}      |
-| POST   | /api/shop/{city_id}/buy  |
-| POST   | /api/shop/{city_id}/sell |
-
----
-
-## Campfire
-
-| Método | Endpoint                     |
-| ------ | ---------------------------- |
-| GET    | /api/campfire/{city_id}      |
-| POST   | /api/campfire/{city_id}/rest |
+- Crypto
+- Classes
+- Personagens
+- Inimigos
+- Batalhas
+- Missões
+- Loja
+- Campfire
 
 ---
 
 # 🔐 Variáveis de Ambiente
 
-| Variável | Padrão | Descrição             |
-| -------- | ------ | --------------------- |
-| PORT     | 8080   | Porta do servidor     |
-| WEB_DIR  | ./web  | Diretório do frontend |
+| Variável | Padrão | Descrição |
+|----------|----------|----------|
+| PORT | 8080 | Porta do servidor |
+| WEB_DIR | ./web | Diretório do frontend |
 
 ---
 
-# 💻 Exemplo de Uso da API
+# 🧪 Testes
 
 ```bash
-curl http://localhost:8080/api/crypto
-
-curl -X POST http://localhost:8080/api/characters \
--H "Content-Type: application/json" \
--d '{"name":"Kabom","class":"warrior"}'
-
-curl -X POST http://localhost:8080/api/missions/session \
--H "Content-Type: application/json" \
--d '{"character_id":1}'
+go test ./...
 ```
+
+---
+
+# 🌳 Controle de Versão
+
+O desenvolvimento foi realizado utilizando Git e GitHub.
+
+Todos os integrantes contribuíram com commits distribuídos durante o desenvolvimento do projeto.
+
+Repositório:
+
+https://github.com/JohnCard2005/Crypto-Desert
 
 ---
 
@@ -429,18 +409,8 @@ curl -X POST http://localhost:8080/api/missions/session \
 
 Projeto desenvolvido pelos alunos do 5º Período de Engenharia da Computação da Faculdade AEMS.
 
-| Integrante      |
-| --------------- |
-| Samuel Medeiros |
-| João Cardoso    |
-| Robert          |
-| Rafael          |
-| Caio Lopes      |
-| Mahgid Thomé    |
-| Alberto Suave   |
-
 ---
 
 # 📄 Licença
 
-Projeto acadêmico desenvolvido exclusivamente para fins educacionais como requisito da disciplina de Estrutura de Dados II.
+Projeto acadêmico desenvolvido exclusivamente para fins educacionais para a disciplina de Estrutura de Dados II.
