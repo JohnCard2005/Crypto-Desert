@@ -30,25 +30,26 @@
 
 # 📖 Sumário
 
-- Sobre o Projeto
-- Narrativa
-- Funcionalidades
-- Tecnologias Utilizadas
-- Arquitetura
-- Estruturas de Dados
-- Mecânica de Combate
-- Facções
-- Classes Jogáveis
-- Integração com API
-- Persistência
-- Estrutura do Projeto
-- Instalação
-- Docker
-- Endpoints
-- Variáveis de Ambiente
-- Testes
-- Controle de Versão
-- Equipe
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Narrativa](#-narrativa)
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+- [Arquitetura](#️-arquitetura)
+- [Estruturas de Dados](#-estruturas-de-dados-utilizadas)
+- [Mecânica de Combate](#️-mecânica-de-combate)
+- [Facções](#️-facções)
+- [Classes Jogáveis](#-classes-jogáveis)
+- [Integração com API](#-integração-com-api)
+- [Persistência](#-persistência)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Instalação](#️-instalação)
+- [Docker](#-docker)
+- [Endpoints da API](#-endpoints-da-api)
+- [Variáveis de Ambiente](#-variáveis-de-ambiente)
+- [Testes](#-testes)
+- [Controle de Versão](#-controle-de-versão)
+- [Equipe](#-equipe)
+- [Licença](#-licença)
 
 ---
 
