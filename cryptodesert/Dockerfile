@@ -43,8 +43,5 @@ ENV WEB_DIR=./web
 ENV DB_PATH=/app/data/game.db
 ENV JWT_SECRET=troque-este-segredo-em-producao
 
-# Volume para persistir o banco de dados entre reinicializações
-VOLUME ["/app/data"]
-
 # Comando de inicialização
 CMD ["./crypto-desert"]
