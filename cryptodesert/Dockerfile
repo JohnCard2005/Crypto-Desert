@@ -1,29 +1,26 @@
-# ── Stage 1: Build ───────────────────────────────────────────────────────────
-FROM golang:1.24-alpine AS builder
+# ── Estágio 1: Build ──────────────────────────────────────────────────────────
+FROM golang:1.25-alpine AS builder
 
-# Dependências de build
+# Dependências para compilar modernc.org/sqlite (sem CGO)
 RUN apk add --no-cache git ca-certificates tzdata
 
 WORKDIR /app
 
-# Copia go.mod primeiro para aproveitar cache de dependências
-COPY go.mod ./
-# go.sum pode não existir se não houver dependências externas
-COPY go.sum* ./
-
+# Copia go.mod e go.sum e baixa dependências (cache layer)
+COPY go.mod go.sum ./
 RUN go mod download
 
 # Copia o restante do código
 COPY . .
 
-# Compila o binário — CGO desativado para imagem mínima
+# Compila o binário — CGO desabilitado, binário estático
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-w -s" -o /app/crypto-desert ./cmd/server
+    go build -ldflags="-w -s" -o crypto-desert ./cmd/server/main.go
 
-# ── Stage 2: Runtime ──────────────────────────────────────────────────────────
-FROM alpine:3.19
+# ── Estágio 2: Imagem final ───────────────────────────────────────────────────
+FROM alpine:3.20
 
-# Certificados para chamadas HTTPS (CoinGecko)
+# Certificados SSL (necessário para chamadas HTTPS à CoinGecko)
 RUN apk add --no-cache ca-certificates tzdata
 
 WORKDIR /app
@@ -32,16 +29,22 @@ WORKDIR /app
 COPY --from=builder /app/crypto-desert .
 
 # Copia o frontend estático
-COPY --from=builder /app/web ./web
+COPY web/ ./web/
 
-# Variáveis de ambiente com defaults
-ENV PORT=8080
-ENV WEB_DIR=./web
+# Cria pasta para o banco de dados SQLite
+RUN mkdir -p /app/data
 
+# Porta exposta
 EXPOSE 8080
 
-# Usuário não-root por segurança
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+# Variáveis de ambiente com valores padrão
+ENV PORT=8080
+ENV WEB_DIR=./web
+ENV DB_PATH=/app/data/game.db
+ENV JWT_SECRET=troque-este-segredo-em-producao
 
-ENTRYPOINT ["./crypto-desert"]
+# Volume para persistir o banco de dados entre reinicializações
+VOLUME ["/app/data"]
+
+# Comando de inicialização
+CMD ["./crypto-desert"]

@@ -1,28 +1,22 @@
-version: "3.9"
-
 services:
-  # ── Servidor principal ────────────────────────────────────────────────────
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: crypto-desert:latest
-    container_name: crypto-desert-server
+  crypto-desert:
+    build: .
+    container_name: crypto-desert
+    restart: unless-stopped
     ports:
       - "8080:8080"
+    volumes:
+      # Banco de dados persiste na pasta ./data do host
+      - ./data:/app/data
     environment:
       - PORT=8080
       - WEB_DIR=./web
-    restart: unless-stopped
+      - DB_PATH=/app/data/game.db
+      # IMPORTANTE: troque este segredo antes de ir para produção!
+      - JWT_SECRET=troque-este-segredo-aqui
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/crypto"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/crypto"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
-    networks:
-      - crypto-desert-net
-
-networks:
-  crypto-desert-net:
-    driver: bridge

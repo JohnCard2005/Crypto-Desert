@@ -20,10 +20,10 @@ var classBases = map[string]classBase{
 	"warrior": {
 		faction:     FactionBTC,
 		cryptoID:    "bitcoin",
-		hp:          120,
+		hp:          130,
 		mana:        0,
-		attackMod:   5,
-		strengthMod: 5,
+		attackMod:   4,   // nerfado: dano base menor, mas ainda tanque
+		strengthMod: 4,
 		ca:          14,
 		defense:     2,
 		speed:       1,
@@ -32,48 +32,48 @@ var classBases = map[string]classBase{
 	"mage": {
 		faction:     FactionETH,
 		cryptoID:    "ethereum",
-		hp:          80,
-		mana:        80,
-		attackMod:   7,
-		strengthMod: 3,
+		hp:          90,   // mais HP para sobreviver
+		mana:        100,  // mais mana para usar habilidades
+		attackMod:   5,
+		strengthMod: 5,   // buffado: spells precisam acertar
 		ca:          11,
 		defense:     0,
-		speed:       2,
-		damageDice:  6,
+		speed:       3,   // mais rápido para agir antes do inimigo
+		damageDice:  8,   // d8 em vez de d6
 	},
 	"archer": {
 		faction:     FactionSOL,
 		cryptoID:    "solana",
-		hp:          95,
-		mana:        40,
+		hp:          105,  // mais HP
+		mana:        50,
 		attackMod:   6,
-		strengthMod: 4,
+		strengthMod: 5,   // buffado: precisão conta
 		ca:          13,
 		defense:     1,
-		speed:       3,
+		speed:       4,
 		damageDice:  8,
 	},
 	"rogue": {
 		faction:     FactionBNB,
 		cryptoID:    "binancecoin",
-		hp:          90,
-		mana:        50,
+		hp:          95,
+		mana:        60,
 		attackMod:   6,
-		strengthMod: 4,
-		ca:          12,
+		strengthMod: 5,   // buffado: veneno precisa de base sólida
+		ca:          13,  // mais evasão
 		defense:     1,
-		speed:       4,
+		speed:       5,   // o mais rápido do jogo
 		damageDice:  8,
 	},
 	"shaman": {
 		faction:     FactionDOGE,
 		cryptoID:    "dogecoin",
-		hp:          100,
-		mana:        60,
-		attackMod:   4,
+		hp:          115,  // tanque secundário
+		mana:        80,   // mais mana para rituais
+		attackMod:   5,
 		strengthMod: 5,
 		ca:          12,
-		defense:     1,
+		defense:     2,   // mais armadura
 		speed:       2,
 		damageDice:  8,
 	},

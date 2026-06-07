@@ -96,7 +96,7 @@ var Catalogue = []EnemyTemplate{
 		Description: "Uma baleia do mercado que virou predadora. Usa habilidades sem hesitação e devora os fracos.",
 		XPReward:    1500,
 		GoldReward:  80,
-		HPOverride:  300,
+		HPOverride:  160,
 		StrengthModOverride: 6,
 	},
 	{

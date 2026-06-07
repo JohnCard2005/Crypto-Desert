@@ -14,9 +14,10 @@ type CryptoPrice struct {
 	ID         string  `json:"id"`
 	Symbol     string  `json:"symbol"`
 	PriceUSD   float64 `json:"price_usd"`
+	Change24h  float64 `json:"change_24h"`
 	Change7d   float64 `json:"change_7d"`
-	Factor     float64 `json:"factor"` // clamped [0.5, 2.0]
-	LastUpdate string  `json:"last_update"`
+	Factor     float64 `json:"factor"`
+	LastUpdate time.Time `json:"last_update"`
 }
 
 // CryptoService fetches, caches and serves CoinGecko data.
@@ -110,7 +111,7 @@ func (cs *CryptoService) MaybeRefresh() {
 
 func (cs *CryptoService) fetch() error {
 	url := fmt.Sprintf(
-		"https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd&include_7d_change=true",
+		"https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd&include_24hr_change=true&include_7d_change=true",
 		coinIDs,
 	)
 
@@ -147,30 +148,53 @@ func (cs *CryptoService) fetch() error {
 		"dogecoin":    "DOGE",
 	}
 
-	now := time.Now().Format("15:04:05")
+	now := time.Now()
+
+	// Captura snapshot dos preços anteriores ANTES de bloquear
+	cs.mu.RLock()
+	prevPrices := make(map[string]CryptoPrice, len(cs.prices))
+	for k, v := range cs.prices { prevPrices[k] = v }
+	cs.mu.RUnlock()
 
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 
 	for id, data := range raw {
-		change7d := data["usd_7d_change"]
+		change7d  := data["usd_7d_change"]
+		change24h := data["usd_24h_change"]
+		currentPrice := data["usd"]
 
-		// Amplifica a variação × 3 para ter impacto real no gameplay.
-		// Ex: +5% real → fator 1.15 (+15% dano) em vez de 1.05 (+5%)
-		// Ex: -8% real → fator 0.76 (-24% dano) — penalidade sentida
-		amplified := change7d * 3.0
+		// Log para debug — mostra o que a CoinGecko retornou
+		log.Printf("[crypto] %s: price=%.2f 24h=%.2f%% 7d=%.2f%%",
+			symbols[id], currentPrice, change24h, change7d)
+
+		// Se a CoinGecko retornou 0 em ambas as variações mas temos preço anterior,
+		// calcula a variação pelo preço atual vs preço anterior guardado
+		if change7d == 0 && change24h == 0 {
+			if prev, hasPrev := prevPrices[id]; hasPrev && prev.PriceUSD > 0 && currentPrice > 0 {
+				// Usa variação desde o último preço conhecido como proxy
+				estimated := ((currentPrice - prev.PriceUSD) / prev.PriceUSD) * 100.0
+				change24h = estimated
+				log.Printf("[crypto] %s: variação estimada pelo preço: %.2f%%", symbols[id], estimated)
+			}
+		}
+
+		// Blend: 60% peso no 24h (mais imediato) + 40% no 7d (tendência)
+		blend := (change24h * 0.6) + (change7d * 0.4)
+
+		// Amplifica × 5 — queda de 10% real → fator 0.50 (impacto claro no jogo)
+		amplified := blend * 5.0
 		factor := 1.0 + (amplified / 100.0)
-		if factor < 0.5 {
-			factor = 0.5
-		}
-		if factor > 2.0 {
-			factor = 2.0
-		}
+		if factor < 0.4 { factor = 0.4 }
+		if factor > 2.5 { factor = 2.5 }
+
+		log.Printf("[crypto] %s: blend=%.2f%% fator=%.3f", symbols[id], blend, factor)
 
 		cs.prices[id] = CryptoPrice{
 			ID:         id,
 			Symbol:     symbols[id],
-			PriceUSD:   data["usd"],
+			PriceUSD:   currentPrice,
+			Change24h:  change24h,
 			Change7d:   change7d,
 			Factor:     factor,
 			LastUpdate: now,

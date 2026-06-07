@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>CRYPTO DESERT</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -28,8 +28,10 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 .tsym{font-family:'Orbitron',monospace;font-size:.58rem;padding:2px 5px;border-radius:3px;}
 .pos{color:var(--green);}.neg{color:var(--red);}
 .tfac{font-size:.62rem;padding:1px 5px;border:1px solid var(--border);border-radius:2px;}
-.fhot{border-color:var(--green)!important;color:var(--green)!important;}
-.fcold{border-color:var(--red)!important;color:var(--red)!important;}
+.fhot {border-color:#00ff88!important;color:#00ff88!important;text-shadow:0 0 8px rgba(0,255,136,.4);}
+.fwarm{border-color:var(--green)!important;color:var(--green)!important;}
+.fcool{border-color:var(--red)!important;color:var(--red)!important;}
+.fcold{border-color:#ff4444!important;color:#ff4444!important;text-shadow:0 0 8px rgba(255,68,68,.4);}
 
 /* TABS */
 .tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border);}
@@ -114,7 +116,7 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 #arena{
   position:relative;
   width:100%;
-  height:360px;
+  height:clamp(240px, 40vw, 360px);
   border-radius:8px 8px 0 0;
   overflow:hidden;
   background:var(--bg2);
@@ -261,20 +263,74 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 .dmg-float{
   position:absolute;
   font-family:'Orbitron',monospace;
-  font-size:1.4rem;
+  font-size:1.8rem;
   font-weight:900;
   pointer-events:none;
-  animation:floatUp .9s ease forwards;
-  z-index:100;
+  animation:floatUp 1.1s ease forwards;
+  z-index:200;
+  letter-spacing:.05em;
+  white-space:nowrap;
 }
-.dmg-float.crit{font-size:2rem;color:#ff8c00;text-shadow:0 0 20px #ff8c00;}
-.dmg-float.miss{color:var(--muted);font-size:1rem;}
-.dmg-float.enemy-dmg{color:var(--red);}
-.dmg-float.player-dmg{color:var(--amber);}
+/* Dano normal do jogador */
+.dmg-float.player-dmg{
+  color:#ffe066;
+  text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 20px rgba(255,200,0,.6);
+}
+/* Dano recebido */
+.dmg-float.enemy-dmg{
+  color:#ff4444;
+  text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 20px rgba(255,0,0,.5);
+}
+/* Crítico */
+.dmg-float.crit{
+  font-size:2.4rem;
+  color:#ff8c00;
+  text-shadow:0 2px 12px rgba(0,0,0,.9), 0 0 30px #ff8c00, 0 0 60px rgba(255,140,0,.4);
+  animation:floatUpCrit 1.2s ease forwards;
+}
+/* Miss */
+.dmg-float.miss{
+  color:#8888aa;
+  font-size:1.1rem;
+  text-shadow:0 1px 4px rgba(0,0,0,.8);
+}
+/* Dano de fogo */
+.dmg-float.fire{
+  color:#ff6a00;
+  text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 20px #ff4400, 0 0 40px rgba(255,100,0,.4);
+}
+/* Dano de veneno */
+.dmg-float.poison{
+  color:#44ff88;
+  text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 20px #00cc44, 0 0 40px rgba(0,200,80,.4);
+}
+/* Cura */
+.dmg-float.heal{
+  color:#00ff88;
+  text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 20px #00cc66;
+  font-size:1.6rem;
+}
+/* Dano de gelo */
+.dmg-float.ice{
+  color:#60d0ff;
+  text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 20px #00aaff;
+}
+/* XP ganho */
+.dmg-float.xp{
+  color:#c070ff;
+  font-size:1.1rem;
+  text-shadow:0 2px 6px rgba(0,0,0,.9), 0 0 15px #9940ff;
+}
+
 @keyframes floatUp{
-  0%{opacity:1;transform:translateY(0) scale(1);}
-  30%{opacity:1;transform:translateY(-30px) scale(1.2);}
-  100%{opacity:0;transform:translateY(-70px) scale(.8);}
+  0%  {opacity:1;transform:translateY(0)   scale(1);}
+  20% {opacity:1;transform:translateY(-20px) scale(1.25);}
+  100%{opacity:0;transform:translateY(-90px) scale(.85);}
+}
+@keyframes floatUpCrit{
+  0%  {opacity:1;transform:translateY(0)   scale(1)   rotate(-3deg);}
+  15% {opacity:1;transform:translateY(-15px) scale(1.5) rotate(2deg);}
+  100%{opacity:0;transform:translateY(-110px) scale(.9)  rotate(0deg);}
 }
 
 /* Status effects in arena */
@@ -297,15 +353,17 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
   border-top:none;
   border-radius:0 0 8px 8px;
   overflow:hidden;
-  height:220px;
+  height:auto;
+  min-height:200px;
 }
-@media(max-width:700px){#battle-panels{grid-template-columns:1fr;height:auto;}}
+@media(max-width:700px){#battle-panels{grid-template-columns:1fr;}}
 
 /* Log panel */
 #blog{
   background:var(--bg2);
   padding:10px 14px;
-  height:220px;
+  height:180px;
+  max-height:180px;
   overflow-y:auto;
   font-size:.72rem;
   line-height:1.9;
@@ -323,31 +381,65 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 /* Action panel — ocupa a direita inteira, ações substituem umas às outras */
 #apanel{
   background:var(--panel);
-  padding:12px;
+  padding:10px 12px 12px;
   display:flex;
   flex-direction:column;
-  gap:6px;
-  height:220px;
   overflow:hidden;
   position:relative;
+  /* altura espelha o log */
+  height:180px;
+  max-height:220px;
+  box-sizing:border-box;
 }
-.albl{font-size:.56rem;letter-spacing:.1em;color:var(--muted);margin-bottom:4px;}
 
-/* Os 4 botões principais ocupam toda a área */
+/* Barra de iniciativa — altura fixa */
+#init-bar{
+  flex-shrink:0;
+  margin-bottom:6px;
+}
+
+/* Strip de equipamentos — altura fixa */
+#eq-strip{
+  flex-shrink:0;
+  margin-bottom:2px;
+}
+
+/* Label "SUA VEZ" */
+.albl{
+  font-size:.54rem;letter-spacing:.1em;color:var(--muted);
+  flex-shrink:0;
+  margin-bottom:5px;
+}
+
+/* Grade de botões — ocupa TODO o espaço restante */
 #abtns{
   display:grid;
   grid-template-columns:1fr 1fr;
   grid-template-rows:1fr 1fr;
-  gap:6px;
+  gap:5px;
   flex:1;
+  min-height:0; /* permite encolher dentro do flex */
 }
-.abtn{padding:0 8px;border-radius:4px;border:1px solid var(--border);
-  background:var(--bg2);color:var(--text);font-family:'Share Tech Mono',monospace;
-  font-size:.72rem;cursor:pointer;transition:all .14s;text-align:left;
-  display:flex;flex-direction:column;justify-content:center;}
-.abtn .ai{font-size:1.1rem;display:block;margin-bottom:2px;}
-.abtn .an{display:block;color:var(--white);font-size:.78rem;font-weight:bold;}
-.abtn .ad{display:block;color:var(--text);font-size:.62rem;margin-top:2px;}
+.abtn{
+  padding:4px 8px;
+  border-radius:4px;
+  border:1px solid var(--border);
+  background:var(--bg2);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;
+  cursor:pointer;
+  transition:all .14s;
+  text-align:left;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  overflow:hidden;
+  min-height:0;
+}
+.abtn .ai{font-size:1rem;display:block;margin-bottom:1px;line-height:1;}
+.abtn .an{display:block;color:var(--white);font-size:.74rem;font-weight:bold;white-space:nowrap;}
+.abtn .ad{display:block;color:var(--text);font-size:.58rem;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .abtn:hover:not(:disabled){border-color:var(--amber2);}
 .abtn.ab{border-color:var(--cyan2);color:var(--cyan);}
 .abtn.ab:hover:not(:disabled){border-color:var(--cyan);}
@@ -356,19 +448,22 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 /* Submenu de ataque — SUBSTITUI os botões (Pokémon style) */
 #attack-submenu{
   display:none;
-  position:absolute;inset:12px;
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
   grid-template-columns:1fr 1fr;
   grid-template-rows:1fr 1fr;
-  gap:6px;
+  gap:5px;
   background:var(--panel);
+  padding:0;
   z-index:10;
 }
-#attack-submenu.vis{display:grid;}
+#attack-submenu.vis{display:grid;padding-bottom:32px;}
 .skill-btn{
-  padding:0 10px;border-radius:4px;border:1px solid var(--border);
+  padding:4px 8px;border-radius:4px;border:1px solid var(--border);
   background:var(--bg2);color:var(--text);font-family:'Share Tech Mono',monospace;
   font-size:.68rem;cursor:pointer;transition:all .14s;text-align:left;
   display:flex;flex-direction:column;justify-content:center;gap:2px;
+  min-height:0;overflow:hidden;
 }
 .skill-btn:hover:not(:disabled){border-color:var(--amber);}
 .skill-btn:disabled{opacity:.3;cursor:not-allowed;}
@@ -380,32 +475,38 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 .skill-btn.ab-skill .sk-name{color:var(--cyan);}
 /* Botão voltar no submenu de ataque */
 #sk-back{
-  position:absolute;bottom:12px;left:12px;right:12px;
+  position:absolute;bottom:0;left:0;right:0;
   display:none;
   font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.1em;
-  padding:5px;border-radius:4px;border:1px solid var(--border);
+  padding:6px;border-radius:0 0 4px 4px;
+  border:none;border-top:1px solid var(--border);
   background:var(--bg2);color:var(--muted);cursor:pointer;text-align:center;
-  z-index:11;
+  z-index:12;
+  height:28px;box-sizing:border-box;
 }
-#attack-submenu.vis ~ #sk-back{display:block;}
+#attack-submenu.vis ~ #sk-back,
+#item-submenu.vis ~ #sk-back{ display:block; }
 
 /* Submenu de itens — também substitui os botões */
 #item-submenu{
   display:none;
-  position:absolute;inset:12px;
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
   flex-direction:column;
-  gap:5px;
+  gap:4px;
   background:var(--panel);
   z-index:10;
   overflow-y:auto;
+  padding:4px 0;
 }
-#item-submenu.vis{display:flex;}
+#item-submenu.vis{display:flex;padding-bottom:32px;}
 #item-submenu::-webkit-scrollbar{width:3px;}
 #item-submenu::-webkit-scrollbar-thumb{background:var(--border);}
 .battle-item-btn{
-  display:flex;align-items:center;gap:8px;padding:7px 9px;
+  display:flex;align-items:center;gap:7px;padding:6px 9px;
   border-radius:4px;border:1px solid var(--border);background:var(--bg2);
-  cursor:pointer;transition:all .14s;font-size:.72rem;flex-shrink:0;
+  cursor:pointer;transition:all .14s;font-size:.7rem;flex-shrink:0;
+  margin:0 4px;
 }
 .battle-item-btn:hover{border-color:var(--green);}
 .bib-icon{font-size:1.2rem;flex-shrink:0;}
@@ -416,10 +517,12 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 
 /* Aguardando inimigo */
 #wmsg{
-  display:none;position:absolute;inset:0;
+  display:none;position:absolute;
+  top:0;left:0;right:0;bottom:0;
   align-items:center;justify-content:center;
   font-size:.72rem;color:var(--muted);
   background:var(--panel);z-index:20;
+  text-align:center;
 }
 #wmsg.show{display:flex;}
 
@@ -450,57 +553,89 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 
 /* Status visual na arena — efeitos sobre os sprites */
 .status-overlay{
-  position:absolute;inset:0;pointer-events:none;border-radius:inherit;
-  animation:none;
+  position:absolute;inset:-6px;pointer-events:none;border-radius:12px;
+  transition:box-shadow .3s;
 }
-/* Frozen — pulso azul */
+
+/* ── Frozen — aura azul gelada ── */
 .sprite-frozen .status-overlay{
-  background:radial-gradient(circle,rgba(96,207,255,.25) 0%,transparent 70%);
+  background:radial-gradient(circle,rgba(96,207,255,.18) 0%,transparent 65%);
+  box-shadow:0 0 18px 6px rgba(80,180,255,.6), inset 0 0 20px rgba(80,200,255,.15);
   animation:frostPulse 1.5s ease-in-out infinite;
 }
 @keyframes frostPulse{
-  0%,100%{opacity:.6;}50%{opacity:1;}
+  0%,100%{box-shadow:0 0 18px 6px rgba(80,180,255,.5), inset 0 0 20px rgba(80,200,255,.1);}
+  50%    {box-shadow:0 0 28px 10px rgba(80,200,255,.9), inset 0 0 30px rgba(120,220,255,.2);}
 }
-/* Burning — chama laranja */
+/* ── Burning — aura laranja chama ── */
 .sprite-burning .status-overlay{
-  background:radial-gradient(circle,rgba(255,96,48,.3) 0%,transparent 70%);
-  animation:flamePulse .8s ease-in-out infinite;
+  background:radial-gradient(circle,rgba(255,96,0,.2) 0%,transparent 65%);
+  box-shadow:0 0 20px 8px rgba(255,80,0,.65), inset 0 0 20px rgba(255,100,0,.15);
+  animation:flamePulse .6s ease-in-out infinite;
 }
 @keyframes flamePulse{
-  0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.05);}
+  0%,100%{box-shadow:0 0 18px 6px rgba(255,80,0,.55);}
+  50%    {box-shadow:0 0 30px 12px rgba(255,140,0,.85);}
 }
-/* Poisoned — verde pulsante */
+/* ── Poisoned — aura verde tóxica ── */
 .sprite-poisoned .status-overlay{
-  background:radial-gradient(circle,rgba(96,255,128,.25) 0%,transparent 70%);
-  animation:poisonPulse 2s ease-in-out infinite;
+  background:radial-gradient(circle,rgba(40,220,100,.18) 0%,transparent 65%);
+  box-shadow:0 0 18px 6px rgba(20,200,80,.6), inset 0 0 20px rgba(40,220,80,.12);
+  animation:poisonPulse 1.8s ease-in-out infinite;
 }
 @keyframes poisonPulse{
-  0%,100%{opacity:.5;}50%{opacity:1;}
+  0%,100%{box-shadow:0 0 14px 4px rgba(20,200,80,.45);}
+  50%    {box-shadow:0 0 26px 10px rgba(40,230,100,.8);}
 }
-/* Paralyzed — amarelo estático */
+/* ── Paralyzed — faíscas amarelas ── */
 .sprite-paralyzed .status-overlay{
-  background:radial-gradient(circle,rgba(255,255,96,.3) 0%,transparent 70%);
-  animation:zapPulse .3s ease-in-out infinite;
+  background:radial-gradient(circle,rgba(255,240,60,.15) 0%,transparent 65%);
+  box-shadow:0 0 16px 5px rgba(255,220,0,.7);
+  animation:zapPulse .25s steps(2) infinite;
 }
 @keyframes zapPulse{
-  0%,100%{opacity:1;}50%{opacity:.3;}
+  0%  {box-shadow:0 0 16px 5px rgba(255,220,0,.8); opacity:1;}
+  50% {box-shadow:0 0 6px 2px rgba(255,200,0,.3);  opacity:.6;}
+  100%{box-shadow:0 0 16px 5px rgba(255,220,0,.8); opacity:1;}
 }
-/* BullRun — dourado brilhante */
+/* ── BullRun — aura dourada expansiva ── */
 .sprite-bull_run .status-overlay{
-  background:radial-gradient(circle,rgba(245,166,35,.35) 0%,transparent 70%);
-  animation:bullPulse 1s ease-in-out infinite;
+  background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 65%);
+  box-shadow:0 0 22px 8px rgba(245,166,0,.7), inset 0 0 25px rgba(255,200,0,.12);
+  animation:bullPulse .8s ease-in-out infinite;
 }
 @keyframes bullPulse{
-  0%,100%{opacity:.7;}50%{opacity:1;}
+  0%,100%{box-shadow:0 0 18px 6px rgba(245,166,0,.55);}
+  50%    {box-shadow:0 0 35px 14px rgba(255,200,0,.9);}
 }
-/* BearTrap — vermelho opressor */
+/* ── BearTrap — aura vermelha pesada ── */
 .sprite-bear_trap .status-overlay{
-  background:radial-gradient(circle,rgba(255,64,64,.25) 0%,transparent 70%);
-  animation:bearPulse 2s ease-in-out infinite;
+  background:radial-gradient(circle,rgba(200,40,40,.18) 0%,transparent 65%);
+  box-shadow:0 0 18px 6px rgba(200,30,30,.6);
+  animation:bearPulse 1.6s ease-in-out infinite;
 }
 @keyframes bearPulse{
-  0%,100%{opacity:.5;}50%{opacity:.9;}
+  0%,100%{box-shadow:0 0 14px 5px rgba(200,30,30,.45);}
+  50%    {box-shadow:0 0 26px 10px rgba(255,60,60,.75);}
 }
+
+/* Badge do status abaixo do sprite */
+.status-badge-row{
+  position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
+  display:flex;gap:3px;z-index:10;
+}
+.status-badge{
+  font-size:.65rem;padding:1px 5px;border-radius:99px;
+  font-family:'Share Tech Mono',monospace;
+  border:1px solid currentColor;
+  white-space:nowrap;
+}
+.sb-frozen   {color:#60d0ff;background:rgba(80,180,255,.15);}
+.sb-burning  {color:#ff6600;background:rgba(255,100,0,.15);}
+.sb-poisoned {color:#44ff88;background:rgba(40,220,80,.15);}
+.sb-paralyzed{color:#ffdd00;background:rgba(255,220,0,.15);}
+.sb-bull_run {color:#f5a623;background:rgba(245,166,0,.15);}
+.sb-bear_trap{color:#ff4444;background:rgba(200,30,30,.15);}
 
 /* Animação de troca de inimigo */
 #enemy-sprite.switching{animation:enemyExit .5s ease forwards;}
@@ -603,8 +738,8 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
   border-radius:10px;
   padding:40px 48px;
   text-align:center;
-  max-width:480px;
-  width:90%;
+  max-width:min(480px, 92vw);
+  width:92%;
   animation:rIn .35s cubic-bezier(.175,.885,.32,1.275);
   position:relative;
   z-index:6001;
@@ -624,7 +759,7 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
   display:none;
   position:fixed;
   z-index:6000;
-  max-width:320px;
+  max-width:min(320px, 90vw);
   background:var(--panel);
   border:2px solid var(--amber);
   border-radius:8px;
@@ -700,7 +835,7 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
   border:2px solid var(--amber);
   border-radius:10px;
   padding:40px 48px;
-  width:100%;max-width:420px;
+  width:92%;max-width:420px;
   animation:fi .3s ease;
 }
 .auth-logo{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;
@@ -768,6 +903,7 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 <div id="auth-user-bar">
   <span>👤 <strong id="auth-username"></strong></span>
   <span style="flex:1"></span>
+  <button id="audio-toggle" style="font-size:1.1rem;background:none;border:none;cursor:pointer;padding:4px 8px" onclick="Audio_.toggle()" title="Liga/Desliga som">🔊</button>
   <button class="btn bg" style="font-size:.55rem;padding:4px 10px;opacity:.6" onclick="resetTutorial()">? Tutorial</button>
   <button class="btn bg" style="font-size:.58rem;padding:5px 12px" onclick="doLogout()">SAIR</button>
 </div>
@@ -1212,6 +1348,14 @@ const IMG = {
     BNB:  '/assets/arenas/bnb.jpg',
     DOGE: '/assets/arenas/doge.jpg',
   },
+  // Ícones das cidades no mapa — coloque em web/assets/cities/{city_id}.png
+  cityIcons: {
+    genesis_block:  '/assets/cities/genesis_block.png',
+    ether_citadel:  '/assets/cities/ether_citadel.png',
+    sol_dunes:      '/assets/cities/sol_dunes.png',
+    bnb_quarter:    '/assets/cities/bnb_quarter.png',
+    doge_wasteland: '/assets/cities/doge_wasteland.png',
+  },
   // Ícones de classe para cards e roster
   icons: {
     warrior: '/assets/icons/warrior.png',
@@ -1360,13 +1504,20 @@ async function loadTicker(){
     const prices=await api.get('/api/crypto');
     const order=['BTC','ETH','SOL','BNB','DOGE'];
     html('tcoins',prices.sort((a,b)=>order.indexOf(a.symbol)-order.indexOf(b.symbol)).map(p=>{
-      const pos=p.change_7d>=0, fc=p.factor>1.1?'fhot':p.factor<0.9?'fcold':'';
+      const pos7d=p.change_7d>=0, pos24h=(p.change_24h||0)>=0;
+      const fc=p.factor>1.15?'fhot':p.factor<0.85?'fcold':p.factor>1.05?'fwarm':p.factor<0.95?'fcool':'';
       const c=FC[p.symbol]||'#888';
+      const factorDiff = ((p.factor-1)*100).toFixed(0);
+      const factorSign = p.factor>=1?'+':'';
       return `<div class="tcoin">
         <span class="tsym" style="background:${c}22;color:${c};border:1px solid ${c}44">${p.symbol}</span>
-        <span style="color:var(--white)">${p.price_usd?'$'+p.price_usd.toLocaleString('en-US',{maximumFractionDigits:2}):'—'}</span>
-        <span class="${pos?'pos':'neg'}">${pos?'+':''}${p.change_7d.toFixed(2)}%</span>
-        <span class="tfac ${fc}">×${p.factor.toFixed(2)}</span>
+        <span style="color:var(--white);font-size:.68rem">${p.price_usd?'$'+p.price_usd.toLocaleString('en-US',{maximumFractionDigits:0}):'—'}</span>
+        <span style="font-size:.6rem">
+          <span class="${pos24h?'pos':'neg'}" title="24h">${pos24h?'+':''}${(p.change_24h||0).toFixed(1)}%</span>
+          <span style="color:var(--muted)"> / </span>
+          <span class="${pos7d?'pos':'neg'}" title="7d">${pos7d?'+':''}${p.change_7d.toFixed(1)}%</span>
+        </span>
+        <span class="tfac ${fc}" title="Fator de dano">×${p.factor.toFixed(2)} <span style="font-size:.55rem">(${factorSign}${factorDiff}%)</span></span>
       </div>`;
     }).join(''));
     el('ts').textContent=`⬤ ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
@@ -1540,7 +1691,11 @@ function renderCities(snap){
     ).join('');
     return `<div class="city-card ${cs.unlocked?'':'locked'} ${cs.cleared?'cleared':''}"
       onclick="${cs.unlocked?`enterCity('${city.id}')`:''}" >
-      <div style="font-size:2rem;margin-bottom:7px">${city.icon}</div>
+      <div style="font-size:2rem;margin-bottom:7px">
+        ${IMG.cityIcons?.[city.id]
+          ? `<img src="${IMG.cityIcons[city.id]}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid var(--border)" onerror="this.style.display='none'">`
+          : city.icon}
+      </div>
       <div style="font-family:'Orbitron',monospace;font-size:.72rem;color:var(--white);margin-bottom:2px">${city.name}</div>
       <div style="font-size:.63rem;color:${fc};margin-bottom:9px">${city.subtitle}</div>
       ${!cs.unlocked?'<div style="font-size:.58rem;color:var(--red);margin-top:5px">🔒 BLOQUEADA</div>':''}
@@ -1718,6 +1873,8 @@ async function doAction(action){
   const isAttack=action==='attack'||action.startsWith('ability');
   if(isAttack){
     el('player-sprite').classList.add('attack');
+    if(action.startsWith('ability')) Audio_.sfx('sfx_ability');
+    else                              Audio_.sfx('sfx_attack');
     await delay(450);
     el('player-sprite').classList.remove('attack');
   }
@@ -1740,8 +1897,18 @@ async function doAction(action){
       if(ev.damage>0){
         const isCrit=ev.message?.includes('CRÍTICO');
         const playerHit=ev.actor===pname;
-        if(playerHit){ hitEnemy(); floatDamage(ev.damage,isCrit,true); }
-        else { floatDamage(ev.damage,isCrit,false); }
+        let dmgType='normal';
+        if(ev.message){
+          const m=ev.message;
+          if(m.includes('fogo')||m.includes('burning')||m.includes('queimando')||m.includes('🔥')) dmgType='fire';
+          else if(m.includes('veneno')||m.includes('poison')||m.includes('☠')) dmgType='poison';
+          else if(m.includes('gelo')||m.includes('frozen')||m.includes('❄')) dmgType='ice';
+        }
+        if(isCrit) Audio_.sfx('sfx_critical');
+        if(playerHit){ hitEnemy(); floatDamage(ev.damage,isCrit,true,dmgType); }
+        else { floatDamage(ev.damage,isCrit,false,dmgType); }
+      } else if(ev.message?.includes('erra')||ev.message?.includes('↷')){
+        Audio_.sfx('sfx_miss');
       }
       await delay(300);
     }
@@ -1781,6 +1948,10 @@ function logBattleMessage(snap){
   if(snap.message) logLine(snap.message,'linfo');
 }
 function handlePhase(snap){
+  // Toca música correta para a fase
+  const isBoss = snap.enemy_queue?.some(e=>e.is_current&&e.is_boss);
+  audioForPhase(snap.phase, isBoss);
+
   switch(snap.phase){
     case 'battle':
       setActionsEnabled(true);
@@ -1853,16 +2024,31 @@ function renderPassives(p){
   ).join('');
 }
 
+const STATUS_LABELS = {
+  frozen:'❄ Congelado', burning:'🔥 Queimando', poisoned:'☠ Envenenado',
+  paralyzed:'⚡ Paralisado', bull_run:'🚀 Bull Run', bear_trap:'🐻 Bear Trap'
+};
+
 function applyStatusClasses(spriteId, statuses){
   const el_=document.getElementById(spriteId);
   if(!el_) return;
-  // Remove all status classes
   el_.classList.remove('sprite-frozen','sprite-burning','sprite-poisoned',
     'sprite-paralyzed','sprite-bull_run','sprite-bear_trap');
-  // Add active ones
   (statuses||[]).forEach(s=>{
+    el_.classList.add('sprite-'+s.replace('_','-').replace('_','-'));
     el_.classList.add('sprite-'+s);
   });
+  // Atualiza badges de status
+  let badges=el_.querySelector('.status-badge-row');
+  if(!badges){
+    badges=document.createElement('div');
+    badges.className='status-badge-row';
+    el_.style.position='relative';
+    el_.appendChild(badges);
+  }
+  badges.innerHTML=(statuses||[]).map(s=>
+    `<span class="status-badge sb-${s}">${STATUS_LABELS[s]||s}</span>`
+  ).join('');
 }
 
 function renderArena(snap){
@@ -1952,15 +2138,39 @@ function hitEnemy(){
   setTimeout(()=>s.classList.remove('hit'),350);
 }
 
-function floatDamage(amount, isCrit, isEnemy){
+// type: 'normal'|'fire'|'poison'|'ice'|'heal'|'xp'|'miss'
+function floatDamage(amount, isCrit, isEnemy, type='normal'){
   const arena=el('arena');
   const div=document.createElement('div');
-  div.className=`dmg-float ${isCrit?'crit':''} ${isEnemy?'enemy-dmg':'player-dmg'}`;
-  div.textContent=isCrit?`💥${amount}`:`-${amount}`;
-  div.style.left=isEnemy?'60%':'30%';
-  div.style.top=isEnemy?'20%':'55%';
+
+  let classes='dmg-float ';
+  if(isCrit)          classes+='crit ';
+  else if(type==='fire')   classes+='fire ';
+  else if(type==='poison') classes+='poison ';
+  else if(type==='ice')    classes+='ice ';
+  else if(type==='heal')   classes+='heal ';
+  else if(type==='xp')     classes+='xp ';
+  else if(type==='miss')   classes+='miss ';
+  else classes+=isEnemy?'enemy-dmg ':'player-dmg ';
+
+  div.className=classes.trim();
+
+  // Texto
+  if(type==='miss')        div.textContent='ERROU';
+  else if(type==='heal')   div.textContent=`+${amount} ♥`;
+  else if(type==='xp')     div.textContent=`+${amount} XP`;
+  else if(isCrit)          div.textContent=`💥 ${amount}!`;
+  else if(type==='fire')   div.textContent=`🔥 ${amount}`;
+  else if(type==='poison') div.textContent=`☠ ${amount}`;
+  else if(type==='ice')    div.textContent=`❄ ${amount}`;
+  else                     div.textContent=`-${amount}`;
+
+  // Posição — jogador à esquerda, inimigo à direita; aleatoriza um pouco
+  const jitter=(Math.random()-.5)*12;
+  div.style.left = isEnemy ? (58+jitter)+'%' : (25+jitter)+'%';
+  div.style.top  = isEnemy ? '15%' : '50%';
   arena.appendChild(div);
-  setTimeout(()=>div.remove(),950);
+  setTimeout(()=>div.remove(),1150);
 }
 
 function setActionsEnabled(on){
@@ -2573,6 +2783,8 @@ function enterGame(username, isNewUser=false){
   el('auth-user-bar').classList.add('on');
   el('auth-username').textContent=username;
   el('app').style.display='block';
+  Audio_.loadPrefs();
+  setTimeout(()=>Audio_.music('music_menu'), 1000);
 }
 
 // Adiciona token em todas as requisições da API
@@ -2603,6 +2815,142 @@ async function checkAuth(){
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem(USER_KEY);
   return false;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  AUDIO SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+const SFX_PATHS = {
+  // Músicas (loop)
+  music_menu:    'web/assets/audio/music/menu.mp3',
+  music_battle:  'web/assets/audio/music/battle.mp3',
+  music_boss:    'web/assets/audio/music/boss.mp3',
+  music_victory: 'web/assets/audio/music/victory.mp3',
+
+  // Efeitos sonoros
+  sfx_attack:    'web/assets/audio/sfx/attack.mp3',
+  sfx_critical:  'web/assets/audio/sfx/critical.mp3',
+  sfx_miss:      'web/assets/audio/sfx/miss.mp3',
+  sfx_ability:   'web/assets/audio/sfx/ability.mp3',
+  sfx_heal:      'web/assets/audio/sfx/heal.mp3',
+  sfx_levelup:   'web/assets/audio/sfx/levelup.mp3',
+  sfx_enemydie:  'web/assets/audio/sfx/enemydie.mp3',
+  sfx_playerdie: 'web/assets/audio/sfx/playerdie.mp3',
+  sfx_coin:      'web/assets/audio/sfx/coin.mp3',
+  sfx_freeze:    'web/assets/audio/sfx/freeze.mp3',
+  sfx_burn:      'web/assets/audio/sfx/burn.mp3',
+  sfx_poison:    'web/assets/audio/sfx/poison.mp3',
+  sfx_click:     'web/assets/audio/sfx/click.mp3',
+};
+
+const Audio_ = {
+  musicVol: .4,
+  sfxVol:   .7,
+  muted:    false,
+  _current: null,   // música atual tocando
+  _cache:   {},     // AudioBuffers cacheados
+
+  init(){
+    this.ctx = null;
+    // Lazy-init AudioContext na primeira interação do usuário
+    document.addEventListener('click', ()=>{ if(!this.ctx) this._initCtx(); }, {once:true});
+  },
+
+  _initCtx(){
+    try{ this.ctx = new (window.AudioContext||window.webkitAudioContext)(); }
+    catch(e){ console.warn('Web Audio não disponível'); }
+  },
+
+  // Pré-carrega um arquivo de áudio
+  async _load(key){
+    if(this._cache[key]) return this._cache[key];
+    const path = SFX_PATHS[key];
+    if(!path) return null;
+    try{
+      const resp = await fetch(path);
+      if(!resp.ok) return null;
+      const buf  = await resp.arrayBuffer();
+      if(!this.ctx) this._initCtx();
+      if(!this.ctx) return null;
+      const decoded = await this.ctx.decodeAudioData(buf);
+      this._cache[key] = decoded;
+      return decoded;
+    }catch(e){ return null; }
+  },
+
+  // Toca um efeito sonoro (sem loop)
+  async sfx(key){
+    if(this.muted) return;
+    const buf = await this._load(key);
+    if(!buf || !this.ctx) return;
+    const src = this.ctx.createBufferSource();
+    const gain = this.ctx.createGain();
+    gain.gain.value = this.sfxVol;
+    src.buffer = buf;
+    src.connect(gain).connect(this.ctx.destination);
+    src.start();
+  },
+
+  // Toca música em loop (para se já tocando outra)
+  async music(key){
+    if(this.muted) return;
+    if(this._currentKey === key) return; // já tocando
+    this.stopMusic();
+    const buf = await this._load(key);
+    if(!buf || !this.ctx) return;
+    const src = this.ctx.createBufferSource();
+    const gain = this.ctx.createGain();
+    gain.gain.value = 0;
+    src.buffer = buf;
+    src.loop = true;
+    src.connect(gain).connect(this.ctx.destination);
+    src.start();
+    // Fade in
+    gain.gain.linearRampToValueAtTime(this.musicVol, this.ctx.currentTime + 1.5);
+    this._current = {src, gain};
+    this._currentKey = key;
+  },
+
+  stopMusic(){
+    if(this._current){
+      try{
+        const {src, gain} = this._current;
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.8);
+        setTimeout(()=>{ try{ src.stop(); }catch(e){} }, 900);
+      }catch(e){}
+      this._current = null;
+      this._currentKey = null;
+    }
+  },
+
+  toggle(){
+    this.muted = !this.muted;
+    if(this.muted) this.stopMusic();
+    const btn = document.getElementById('audio-toggle');
+    if(btn) btn.textContent = this.muted ? '🔇' : '🔊';
+    localStorage.setItem('cd_muted', this.muted?'1':'0');
+  },
+
+  loadPrefs(){
+    this.muted = localStorage.getItem('cd_muted') === '1';
+    const btn = document.getElementById('audio-toggle');
+    if(btn) btn.textContent = this.muted ? '🔇' : '🔊';
+  }
+};
+
+Audio_.init();
+
+// Integração com fases do jogo
+function audioForPhase(phase, isBossWave){
+  if(phase === 'battle' || phase === 'wave_intro'){
+    Audio_.music(isBossWave ? 'music_boss' : 'music_battle');
+  } else if(phase === 'wave_cleared' || phase === 'mission_cleared'){
+    Audio_.music('music_victory');
+  } else {
+    Audio_.music('music_menu');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2688,6 +3036,7 @@ function skipTutorial(){
   el('tut-tooltip').classList.remove('on');
   el('tut-highlight').style.display='none';
   if(window._tutResizeObs){ window._tutResizeObs.disconnect(); }
+  if(window._tutResizeHandler){ window.removeEventListener('resize', window._tutResizeHandler); }
   tutActive=false;
 }
 
@@ -2747,13 +3096,16 @@ async function showTutStep(idx){
 
     // Re-posiciona se o viewport mudar (resize ou zoom)
     if(window._tutResizeObs) window._tutResizeObs.disconnect();
-    window._tutResizeObs = new ResizeObserver(()=>{
+    const reposition = ()=>{
       const r2=target.getBoundingClientRect();
       hl.style.top=(r2.top-pad)+'px'; hl.style.left=(r2.left-pad)+'px';
       hl.style.width=(r2.width+pad*2)+'px'; hl.style.height=(r2.height+pad*2)+'px';
       positionTooltip(r2, step.arrow||'up');
-    });
-    window._tutResizeObs.observe(document.body);
+    };
+    window._tutResizeObs = new ResizeObserver(reposition);
+    window._tutResizeObs.observe(document.documentElement);
+    window.addEventListener('resize', reposition, {once:false});
+    window._tutResizeHandler = reposition;
   } else {
     el('tut-highlight').style.display='none';
     centerTooltip();

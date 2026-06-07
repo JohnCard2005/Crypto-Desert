@@ -86,7 +86,7 @@ var ClassTrees = map[string]ClassAbilityTree{
 		Ability1: Ability{
 			Name:        "Fúria do Bloco",
 			Description: "Canaliza o poder do bloco genesis — dano triplo em um único golpe devastador.",
-			ManaCost:    0, Cooldown: 0, DamageMult: 3.0, Targeting: TargetEnemy, Unlocked: true,
+			ManaCost:    0, Cooldown: 0, DamageMult: 2.5, Targeting: TargetEnemy, Unlocked: true,
 		},
 		Passive1: Passive{
 			Name:        "Pele de Ferro",
@@ -118,7 +118,7 @@ var ClassTrees = map[string]ClassAbilityTree{
 		Ability1Evo: Ability{
 			Name:        "Fúria Primordial",
 			Description: "Evolução da Fúria do Bloco — dano ×5.0 e ignora toda a defesa do alvo.",
-			ManaCost:    0, Cooldown: 0, DamageMult: 5.0, Targeting: TargetEnemy,
+			ManaCost:    0, Cooldown: 0, DamageMult: 4.0, Targeting: TargetEnemy,
 		},
 	},
 

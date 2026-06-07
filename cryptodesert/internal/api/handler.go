@@ -438,14 +438,27 @@ func (h *Handler) StartMissionSession(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := fmt.Sprintf("m-%d", c.ID)
 
-	// Reaproveita sessão existente se houver
+	// Reaproveita sessão existente ou cria nova carregando progresso salvo
 	if _, err := h.runners.Get(sessionID); err != nil {
-		progress := missions.NewPlayerProgress(c.ID, c.Name)
+		// Tenta carregar progresso salvo no banco
+		progress := h.progress.Get(c.ID)
+		if progress == nil {
+			// Progresso novo para este personagem
+			progress = missions.NewPlayerProgress(c.ID, c.Name)
+		} else {
+			// Garante que a dificuldade atual está inicializada
+			// (pode faltar após migração ou primeiro uso)
+			progress.EnsureDifficulty()
+		}
 		runner := missions.NewRunner(c, progress)
 		h.runners.Set(sessionID, runner)
 	}
 
 	runner, _ := h.runners.Get(sessionID)
+	// Salva progresso no banco após cada mudança de estado
+	if runner != nil {
+		h.progress.Save(c.ID, runner.Progress)
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"session_id": sessionID,
 		"snapshot":   h.enrichSnapshot(runner.Snapshot()),
@@ -486,6 +499,7 @@ func (h *Handler) EnterCity(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusForbidden, err.Error())
 		return
 	}
+	if runner != nil && runner.Progress != nil { h.progress.Save(runner.Progress.CharacterID, runner.Progress) }
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -502,6 +516,7 @@ func (h *Handler) StartMission(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusConflict, err.Error())
 		return
 	}
+	if runner != nil && runner.Progress != nil { h.progress.Save(runner.Progress.CharacterID, runner.Progress) }
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -535,6 +550,7 @@ func (h *Handler) BeginWaveBattle(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusConflict, err.Error())
 		return
 	}
+	h.progress.Save(c.ID, runner.Progress)
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -623,6 +639,7 @@ func (h *Handler) MissionConfirm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if runner != nil && runner.Progress != nil { h.progress.Save(runner.Progress.CharacterID, runner.Progress) }
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -744,19 +761,24 @@ func (h *Handler) GetShop(w http.ResponseWriter, r *http.Request) {
 	if charIDStr != "" {
 		charID, _ := strconv.Atoi(charIDStr)
 		if charID > 0 {
-			if pp := h.progress.Get(charID); pp != nil {
-				var city *missions.City
-				for _, c := range missions.Campaign {
-					if c.ID == cityID {
-						city = &c
-						break
-					}
+			// Encontra a cidade pelo ID
+			var targetCity *missions.City
+			for _, c := range missions.Campaign {
+				c := c
+				if c.ID == cityID {
+					targetCity = &c
+					break
 				}
-				if city != nil && !pp.CityUnlocked(*city) {
+			}
+			if targetCity != nil && targetCity.UnlockedBy != "" {
+				// Cidade tem pré-requisito — verifica progresso
+				pp := h.progress.Get(charID)
+				if pp == nil || !pp.CityUnlocked(*targetCity) {
 					writeError(w, http.StatusForbidden, "cidade ainda bloqueada — complete a missão anterior primeiro")
 					return
 				}
 			}
+			// genesis_block não tem pré-requisito — sempre acessível
 		}
 	}
 
@@ -1052,6 +1074,7 @@ func (h *Handler) ReplayMission(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusConflict, err.Error())
 		return
 	}
+	if runner != nil && runner.Progress != nil { h.progress.Save(runner.Progress.CharacterID, runner.Progress) }
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -1069,6 +1092,7 @@ func (h *Handler) StartNG(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusConflict, err.Error())
 		return
 	}
+	if runner != nil && runner.Progress != nil { h.progress.Save(runner.Progress.CharacterID, runner.Progress) }
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -1127,6 +1151,7 @@ func (h *Handler) UseItemInBattle(w http.ResponseWriter, r *http.Request) {
 		Message: fmt.Sprintf("🧪 %s usou %s — %s", runner.Player.Name, req.ItemID, result.Message),
 	})
 
+	h.progress.Save(c.ID, runner.Progress)
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 
@@ -1159,6 +1184,7 @@ func (h *Handler) StartWave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if runner != nil && runner.Progress != nil { h.progress.Save(runner.Progress.CharacterID, runner.Progress) }
 	writeJSON(w, http.StatusOK, h.enrichSnapshot(runner.Snapshot()))
 }
 

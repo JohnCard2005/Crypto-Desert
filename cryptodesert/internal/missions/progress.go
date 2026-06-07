@@ -106,13 +106,21 @@ func (pp *PlayerProgress) initDifficulty(d Difficulty) {
 		}
 		for i, wave := range city.Mission.Waves {
 			status := WaveStatusLocked
-			if d == DifficultyNormal && city.UnlockedBy == "" && i == 0 {
+			// Primeira wave da primeira cidade sempre disponível em qualquer dificuldade
+			if city.UnlockedBy == "" && i == 0 {
 				status = WaveStatusAvailable
 			}
 			mp.Waves[wave.ID] = &WaveProgress{WaveID: wave.ID, Status: status}
 		}
 		pp.MissionProgress[d][city.Mission.ID] = mp
 	}
+}
+
+
+// EnsureDifficulty garante que a dificuldade atual está inicializada.
+// Chamado ao carregar progresso do banco para garantir consistência.
+func (pp *PlayerProgress) EnsureDifficulty() {
+	pp.initDifficulty(pp.CurrentDifficulty)
 }
 
 func (pp *PlayerProgress) MissionState(missionID string) (*MissionProgress, error) {
@@ -192,9 +200,16 @@ func (pp *PlayerProgress) RecordWaveCleared(city City, waveID string, xp, gold i
 			if i+1 < len(city.Mission.Waves) {
 				nextID := city.Mission.Waves[i+1].ID
 				if wp, ok := mp.Waves[nextID]; ok {
-					wp.Status = WaveStatusAvailable
+					// Só desbloqueia a próxima se ainda estiver Locked
+					// Em replay, waves já concluídas (Cleared/Available) não devem ser rebaixadas
+					if wp.Status == WaveStatusLocked {
+						wp.Status = WaveStatusAvailable
+					}
 				}
-				mp.ActiveWave = nextID
+				// Só atualiza ActiveWave se a atual não era mais avançada
+				if mp.ActiveWave == waveID {
+					mp.ActiveWave = nextID
+				}
 			} else {
 				// Só registra mission cleared se ainda não tinha sido concluída antes
 				if !mp.Cleared {
