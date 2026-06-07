@@ -17,7 +17,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 #app{max-width:1280px;margin:0 auto;padding:16px;position:relative;z-index:1;}
 
 /* HEADER */
-header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber2);margin-bottom:20px;}
+header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber2);margin-bottom:20px;}
+.logo-wrap{display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
 .logo{font-family:'Orbitron',monospace;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--amber);letter-spacing:.12em;text-shadow:0 0 30px rgba(245,166,35,.3);}
 .logo-sub{font-size:.72rem;color:var(--cyan);letter-spacing:.35em;margin-top:4px;opacity:.7;}
 
@@ -860,6 +861,62 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
   font-size:.72rem;
 }
 #auth-user-bar.on{display:flex;}
+
+/* ═══ VOLUME CONTROL ═══ */
+#vol-control{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+}
+#vol-panel{
+  display:none;
+  position:absolute;
+  bottom:calc(100% + 8px);
+  right:0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:12px 14px;
+  min-width:180px;
+  z-index:9000;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+}
+#vol-panel.on{ display:block; }
+#vol-panel .vp-title{
+  font-family:'Orbitron',monospace;
+  font-size:.55rem;
+  letter-spacing:.1em;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+#vol-panel .vp-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+  font-size:.68rem;
+  color:var(--text);
+}
+#vol-panel .vp-row:last-child{ margin-bottom:0; }
+#vol-panel .vp-label{
+  width:44px;
+  flex-shrink:0;
+  font-size:.62rem;
+  color:var(--muted);
+}
+#vol-panel input[type=range]{
+  flex:1;
+  height:4px;
+  accent-color:var(--amber);
+  cursor:pointer;
+}
+#vol-panel .vp-val{
+  width:28px;
+  text-align:right;
+  font-size:.62rem;
+  color:var(--amber);
+  flex-shrink:0;
+}
 </style>
 </head>
 <body>
@@ -867,7 +924,12 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 <!-- ═══ AUTH SCREEN ═══ -->
 <div id="auth-screen" class="on">
   <div class="auth-box">
-    <div class="auth-logo">⚔ CRYPTO DESERT</div>
+    <div class="auth-logo" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px">
+      <img src="/assets/logo.png" alt=""
+        style="height:52px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 0 10px rgba(245,166,35,.5))"
+        onerror="this.style.display='none'">
+      <span>CRYPTO DESERT</span>
+    </div>
     <div class="auth-sub">RPG · 2087 · DESERTO DIGITAL</div>
     <div class="auth-tabs">
       <button class="auth-tab on" onclick="authTab('login')">ENTRAR</button>
@@ -903,7 +965,29 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 <div id="auth-user-bar">
   <span>👤 <strong id="auth-username"></strong></span>
   <span style="flex:1"></span>
-  <button id="audio-toggle" style="font-size:1.1rem;background:none;border:none;cursor:pointer;padding:4px 8px" onclick="Audio_.toggle()" title="Liga/Desliga som">🔊</button>
+  <div id="vol-control">
+  <button id="audio-toggle" style="font-size:1.1rem;background:none;border:none;cursor:pointer;padding:4px 8px;color:var(--text)" onclick="toggleVolPanel()" title="Volume">🔊</button>
+  <div id="vol-panel">
+    <div class="vp-title">🔊 ÁUDIO</div>
+    <div class="vp-row">
+      <span class="vp-label">Música</span>
+      <input type="range" min="0" max="100" value="40" id="vol-music"
+        oninput="Audio_.setMusicVol(this.value/100); document.getElementById('vol-music-val').textContent=this.value+'%'">
+      <span class="vp-val" id="vol-music-val">40%</span>
+    </div>
+    <div class="vp-row">
+      <span class="vp-label">Efeitos</span>
+      <input type="range" min="0" max="100" value="35" id="vol-sfx"
+        oninput="Audio_.setSfxVol(this.value/100); document.getElementById('vol-sfx-val').textContent=this.value+'%'">
+      <span class="vp-val" id="vol-sfx-val">35%</span>
+    </div>
+    <div class="vp-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:8px">
+      <button class="btn bg" style="flex:1;font-size:.58rem;padding:5px" onclick="Audio_.toggle()">
+        <span id="mute-label">🔇 Mutar tudo</span>
+      </button>
+    </div>
+  </div>
+</div>
   <button class="btn bg" style="font-size:.55rem;padding:4px 10px;opacity:.6" onclick="resetTutorial()">? Tutorial</button>
   <button class="btn bg" style="font-size:.58rem;padding:5px 12px" onclick="doLogout()">SAIR</button>
 </div>
@@ -911,7 +995,15 @@ header{text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--amber
 <div id="app" style="display:none">
 
 <header>
-  <div class="logo">⚔ CRYPTO DESERT</div>
+  <div class="logo-wrap">
+    <!-- Imagem da logo — coloque em web/assets/logo.png (recomendado 512x512px) -->
+    <img id="game-logo-img" src="/assets/logo.png"
+      alt="Crypto Desert"
+      onerror="this.style.display='none'; document.getElementById('game-logo-text').style.display='block'"
+      style="height:80px;width:auto;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 0 18px rgba(245,166,35,.5))">
+    <!-- Fallback texto caso a imagem não exista -->
+    <div id="game-logo-text" class="logo" style="display:none">⚔ CRYPTO DESERT</div>
+  </div>
   <div class="logo-sub">RPG · 2087 · DESERTO DIGITAL</div>
 </header>
 
@@ -2824,30 +2916,30 @@ async function checkAuth(){
 
 const SFX_PATHS = {
   // Músicas (loop)
-  music_menu:    'web/assets/audio/music/menu.mp3',
-  music_battle:  'web/assets/audio/music/battle.mp3',
-  music_boss:    'web/assets/audio/music/boss.mp3',
-  music_victory: 'web/assets/audio/music/victory.mp3',
+  music_menu:    '/assets/audio/music/menu.mp3',
+  music_battle:  '/assets/audio/music/battle.mp3',
+  music_boss:    '/assets/audio/music/boss.mp3',
+  music_victory: '/assets/audio/music/victory.mp3',
 
   // Efeitos sonoros
-  sfx_attack:    'web/assets/audio/sfx/attack.mp3',
-  sfx_critical:  'web/assets/audio/sfx/critical.mp3',
-  sfx_miss:      'web/assets/audio/sfx/miss.mp3',
-  sfx_ability:   'web/assets/audio/sfx/ability.mp3',
-  sfx_heal:      'web/assets/audio/sfx/heal.mp3',
-  sfx_levelup:   'web/assets/audio/sfx/levelup.mp3',
-  sfx_enemydie:  'web/assets/audio/sfx/enemydie.mp3',
-  sfx_playerdie: 'web/assets/audio/sfx/playerdie.mp3',
-  sfx_coin:      'web/assets/audio/sfx/coin.mp3',
-  sfx_freeze:    'web/assets/audio/sfx/freeze.mp3',
-  sfx_burn:      'web/assets/audio/sfx/burn.mp3',
-  sfx_poison:    'web/assets/audio/sfx/poison.mp3',
-  sfx_click:     'web/assets/audio/sfx/click.mp3',
+  sfx_attack:    '/assets/audio/sfx/attack.mp3',
+  sfx_critical:  '/assets/audio/sfx/critical.mp3',
+  sfx_miss:      '/assets/audio/sfx/miss.mp3',
+  sfx_ability:   '/assets/audio/sfx/ability.mp3',
+  sfx_heal:      '/assets/audio/sfx/heal.mp3',
+  sfx_levelup:   '/assets/audio/sfx/levelup.mp3',
+  sfx_enemydie:  '/assets/audio/sfx/enemydie.mp3',
+  sfx_playerdie: '/assets/audio/sfx/playerdie.mp3',
+  sfx_coin:      '/assets/audio/sfx/coin.mp3',
+  sfx_freeze:    '/assets/audio/sfx/freeze.mp3',
+  sfx_burn:      '/assets/audio/sfx/burn.mp3',
+  sfx_poison:    '/assets/audio/sfx/poison.mp3',
+  sfx_click:     '/assets/audio/sfx/click.mp3',
 };
 
 const Audio_ = {
   musicVol: .4,
-  sfxVol:   .7,
+  sfxVol:   .35,
   muted:    false,
   _current: null,   // música atual tocando
   _cache:   {},     // AudioBuffers cacheados
@@ -2859,7 +2951,12 @@ const Audio_ = {
   },
 
   _initCtx(){
-    try{ this.ctx = new (window.AudioContext||window.webkitAudioContext)(); }
+    try{
+      this.ctx = new (window.AudioContext||window.webkitAudioContext)();
+      this.ctx.addEventListener('statechange', ()=>{
+        if(this.ctx.state==='suspended' && !this.muted) this.ctx.resume();
+      });
+    }
     catch(e){ console.warn('Web Audio não disponível'); }
   },
 
@@ -2911,6 +3008,7 @@ const Audio_ = {
     gain.gain.linearRampToValueAtTime(this.musicVol, this.ctx.currentTime + 1.5);
     this._current = {src, gain};
     this._currentKey = key;
+    this._lastMusicKey = key; // guarda para retomar após unmute
   },
 
   stopMusic(){
@@ -2927,16 +3025,70 @@ const Audio_ = {
 
   toggle(){
     this.muted = !this.muted;
-    if(this.muted) this.stopMusic();
     const btn = document.getElementById('audio-toggle');
-    if(btn) btn.textContent = this.muted ? '🔇' : '🔊';
+    if(this.muted){
+      this.stopMusic();
+      if(btn) btn.textContent = '🔇';
+      const lbl1=document.getElementById('mute-label');
+      if(lbl1) lbl1.textContent='🔊 Desmutar';
+    } else {
+      // Retoma o AudioContext se estiver suspenso
+      if(this.ctx && this.ctx.state === 'suspended'){
+        this.ctx.resume();
+      }
+      if(btn) btn.textContent = '🔊';
+      const lbl2=document.getElementById('mute-label');
+      if(lbl2) lbl2.textContent='🔇 Mutar tudo';
+      // Retoma a música da fase atual
+      if(this._lastMusicKey){
+        const key = this._lastMusicKey;
+        this._currentKey = null; // força retomar mesmo sendo a mesma key
+        this.music(key);
+      }
+    }
     localStorage.setItem('cd_muted', this.muted?'1':'0');
+  },
+
+  setMusicVol(v){
+    this.musicVol = v;
+    localStorage.setItem('cd_music_vol', v);
+    // Aplica no gain atual se estiver tocando
+    if(this._current && this.ctx){
+      this._current.gain.gain.linearRampToValueAtTime(
+        this.muted ? 0 : v, this.ctx.currentTime + 0.1
+      );
+    }
+  },
+
+  setSfxVol(v){
+    this.sfxVol = v;
+    localStorage.setItem('cd_sfx_vol', v);
   },
 
   loadPrefs(){
     this.muted = localStorage.getItem('cd_muted') === '1';
+    const savedMusic = localStorage.getItem('cd_music_vol');
+    const savedSfx   = localStorage.getItem('cd_sfx_vol');
+    if(savedMusic){ this.musicVol = parseFloat(savedMusic); }
+    if(savedSfx)  { this.sfxVol   = parseFloat(savedSfx);   }
+
+    // Atualiza UI dos sliders
+    const vm = document.getElementById('vol-music');
+    const vs = document.getElementById('vol-sfx');
+    const vmv = document.getElementById('vol-music-val');
+    const vsv = document.getElementById('vol-sfx-val');
+    if(vm){ vm.value = Math.round(this.musicVol*100); }
+    if(vs){ vs.value = Math.round(this.sfxVol*100);   }
+    if(vmv){ vmv.textContent = Math.round(this.musicVol*100)+'%'; }
+    if(vsv){ vsv.textContent = Math.round(this.sfxVol*100)+'%';   }
+
+    // Atualiza botão mute
     const btn = document.getElementById('audio-toggle');
-    if(btn) btn.textContent = this.muted ? '🔇' : '🔊';
+    const lbl = document.getElementById('mute-label');
+    if(this.muted){
+      if(btn) btn.textContent = '🔇';
+      if(lbl) lbl.textContent = '🔊 Desmutar';
+    }
   }
 };
 
@@ -2950,6 +3102,24 @@ function audioForPhase(phase, isBossWave){
     Audio_.music('music_victory');
   } else {
     Audio_.music('music_menu');
+  }
+}
+
+
+// Volume panel toggle
+function toggleVolPanel(){
+  const p = document.getElementById('vol-panel');
+  p.classList.toggle('on');
+  // Fecha ao clicar fora
+  if(p.classList.contains('on')){
+    setTimeout(()=>{
+      document.addEventListener('click', function closeVol(e){
+        if(!document.getElementById('vol-control').contains(e.target)){
+          p.classList.remove('on');
+          document.removeEventListener('click', closeVol);
+        }
+      });
+    }, 10);
   }
 }
 
