@@ -117,7 +117,7 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 #arena{
   position:relative;
   width:100%;
-  height:clamp(240px, 40vw, 360px);
+  height:clamp(320px, 42vw, 420px);
   border-radius:8px 8px 0 0;
   overflow:hidden;
   background:var(--bg2);
@@ -165,17 +165,18 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 /* Enemy side — top right */
 #enemy-arena{
   position:absolute;
-  top:10px; right:40px;
+  top:10px; right:10px;
   display:flex;flex-direction:column;align-items:center;
   gap:0;
 }
 /* Enemy stat box — like Pokémon top-left info box */
 .arena-info-box{
-  background:rgba(10,10,20,.85);
+  background:rgba(10,10,20,.88);
   border:1px solid var(--border);
   border-radius:6px;
-  padding:10px 14px;
-  min-width:200px;
+  padding:8px 12px;
+  min-width:190px;
+  max-width:230px;
   backdrop-filter:blur(4px);
 }
 .aib-name{font-family:'Orbitron',monospace;font-size:.84rem;color:var(--white);margin-bottom:6px;letter-spacing:.04em;}
@@ -212,21 +213,21 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 /* Player side — bottom left */
 #player-arena{
   position:absolute;
-  bottom:20px; left:40px;
+  bottom:60px; left:20px;
   display:flex;flex-direction:column;align-items:center;
   gap:0;
 }
 #player-sprite{
-  font-size:9rem;
+  font-size:10rem;
   line-height:1;
   display:flex;align-items:center;justify-content:center;
-  min-width:180px;min-height:180px;
+  min-width:200px;min-height:200px;
   animation:playerIdle 2s ease-in-out infinite;
   filter:drop-shadow(0 0 20px rgba(0,229,204,.3));
   margin-bottom:10px;
 }
 #player-sprite img{
-  width:180px;height:180px;
+  width:200px;height:200px;
   object-fit:contain;
   image-rendering:pixelated;
   transform:scaleX(-1);
@@ -251,12 +252,13 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 /* Player stat box — bottom right in arena */
 #player-info-box{
   position:absolute;
-  bottom:16px;right:40px;
-  background:rgba(10,10,20,.85);
+  bottom:12px;right:12px;
+  background:rgba(10,10,20,.88);
   border:1px solid var(--border);
   border-radius:6px;
-  padding:10px 14px;
-  min-width:220px;
+  padding:8px 12px;
+  min-width:200px;
+  max-width:240px;
   backdrop-filter:blur(4px);
 }
 
@@ -348,14 +350,15 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 /* Battle panels below arena — LOG à esquerda, AÇÕES à direita */
 #battle-panels{
   display:grid;
-  grid-template-columns:1fr 320px;
+  grid-template-columns:1fr 360px;
+  grid-template-rows:1fr;
   gap:0;
   border:1px solid var(--border);
   border-top:none;
   border-radius:0 0 8px 8px;
   overflow:hidden;
-  height:auto;
-  min-height:200px;
+  min-height:300px;
+  height:320px;
 }
 @media(max-width:700px){#battle-panels{grid-template-columns:1fr;}}
 
@@ -363,8 +366,8 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 #blog{
   background:var(--bg2);
   padding:10px 14px;
-  height:180px;
-  max-height:180px;
+  height:100%;
+  min-height:300px;
   overflow-y:auto;
   font-size:.72rem;
   line-height:1.9;
@@ -380,67 +383,70 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 .lhdr{color:var(--amber2);font-size:.6rem;margin-top:4px;}
 
 /* Action panel — ocupa a direita inteira, ações substituem umas às outras */
-#apanel{
+/* Barra acima do painel — iniciativa + fila de inimigos */
+#battle-topbar{
   background:var(--panel);
-  padding:10px 12px 12px;
+  border:1px solid var(--border);
+  border-top:none;
+  border-bottom:none;
+  padding:6px 12px;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
+  gap:4px;
+}
+
+#apanel{
+  background:var(--panel);
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
   position:relative;
-  /* altura espelha o log */
-  height:180px;
-  max-height:220px;
+  height:100%;
+  min-height:300px;
   box-sizing:border-box;
 }
-
-/* Barra de iniciativa — altura fixa */
-#init-bar{
-  flex-shrink:0;
-  margin-bottom:6px;
-}
-
-/* Strip de equipamentos — altura fixa */
-#eq-strip{
-  flex-shrink:0;
-  margin-bottom:2px;
-}
-
-/* Label "SUA VEZ" */
-.albl{
-  font-size:.54rem;letter-spacing:.1em;color:var(--muted);
-  flex-shrink:0;
-  margin-bottom:5px;
-}
-
-/* Grade de botões — ocupa TODO o espaço restante */
-#abtns{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr 1fr;
-  gap:5px;
-  flex:1;
-  min-height:0; /* permite encolher dentro do flex */
-}
+.albl{font-size:.58rem;letter-spacing:.12em;color:var(--muted);margin-bottom:2px;}
+#abtns{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .abtn{
-  padding:4px 8px;
+  padding:11px 10px;
   border-radius:4px;
   border:1px solid var(--border);
   background:var(--bg2);
   color:var(--text);
   font-family:'Share Tech Mono',monospace;
-  font-size:.7rem;
+  font-size:.78rem;
   cursor:pointer;
   transition:all .14s;
   text-align:left;
+}
+.abtn .ai{font-size:1.1rem;display:block;margin-bottom:3px;}
+.abtn .an{display:block;color:var(--white);font-size:.8rem;font-weight:bold;}
+.abtn .ad{display:block;color:var(--muted);font-size:.62rem;margin-top:2px;}
+
+/* Barra de iniciativa */
+#init-bar{ margin-bottom:4px; flex-shrink:0; }
+
+/* Strip de inimigos */
+#eq-strip{
+  overflow-x:auto;overflow-y:hidden;
+  white-space:nowrap;
+  min-height:28px;
+  flex-shrink:0;
+}
+#eq-strip::-webkit-scrollbar{ height:2px; }
+#eq-strip::-webkit-scrollbar-thumb{ background:var(--border); }
+
+/* battle-topbar */
+#battle-topbar{
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+  padding:6px 12px;
+  background:var(--panel);
   display:flex;
   flex-direction:column;
-  justify-content:center;
-  overflow:hidden;
-  min-height:0;
+  gap:3px;
 }
-.abtn .ai{font-size:1rem;display:block;margin-bottom:1px;line-height:1;}
-.abtn .an{display:block;color:var(--white);font-size:.74rem;font-weight:bold;white-space:nowrap;}
-.abtn .ad{display:block;color:var(--text);font-size:.58rem;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .abtn:hover:not(:disabled){border-color:var(--amber2);}
 .abtn.ab{border-color:var(--cyan2);color:var(--cyan);}
 .abtn.ab:hover:not(:disabled){border-color:var(--cyan);}
@@ -453,12 +459,13 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
   top:0;left:0;right:0;bottom:0;
   grid-template-columns:1fr 1fr;
   grid-template-rows:1fr 1fr;
-  gap:5px;
+  gap:6px;
   background:var(--panel);
-  padding:0;
+  padding:6px;
   z-index:10;
+  border-radius:4px;
 }
-#attack-submenu.vis{display:grid;padding-bottom:32px;}
+#attack-submenu.vis{display:grid;}
 .skill-btn{
   padding:4px 8px;border-radius:4px;border:1px solid var(--border);
   background:var(--bg2);color:var(--text);font-family:'Share Tech Mono',monospace;
@@ -476,14 +483,14 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 .skill-btn.ab-skill .sk-name{color:var(--cyan);}
 /* Botão voltar no submenu de ataque */
 #sk-back{
-  position:absolute;bottom:0;left:0;right:0;
+  position:absolute;bottom:6px;left:6px;right:6px;
   display:none;
   font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.1em;
-  padding:6px;border-radius:0 0 4px 4px;
-  border:none;border-top:1px solid var(--border);
+  padding:5px;border-radius:4px;
+  border:1px solid var(--border);
   background:var(--bg2);color:var(--muted);cursor:pointer;text-align:center;
   z-index:12;
-  height:28px;box-sizing:border-box;
+  height:26px;box-sizing:border-box;
 }
 #attack-submenu.vis ~ #sk-back,
 #item-submenu.vis ~ #sk-back{ display:block; }
@@ -498,9 +505,10 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
   background:var(--panel);
   z-index:10;
   overflow-y:auto;
-  padding:4px 0;
+  padding:6px;
+  border-radius:4px;
 }
-#item-submenu.vis{display:flex;padding-bottom:32px;}
+#item-submenu.vis{display:flex;}
 #item-submenu::-webkit-scrollbar{width:3px;}
 #item-submenu::-webkit-scrollbar-thumb{background:var(--border);}
 .battle-item-btn{
@@ -859,6 +867,9 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
   background:rgba(245,166,35,.08);
   border-bottom:1px solid var(--amber2);
   font-size:.72rem;
+  overflow:visible;
+  position:relative;
+  z-index:100;
 }
 #auth-user-bar.on{display:flex;}
 
@@ -870,9 +881,9 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 }
 #vol-panel{
   display:none;
-  position:absolute;
-  bottom:calc(100% + 8px);
-  right:0;
+  position:fixed;
+  bottom:60px;
+  right:12px;
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:8px;
@@ -924,9 +935,9 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 <!-- ═══ AUTH SCREEN ═══ -->
 <div id="auth-screen" class="on">
   <div class="auth-box">
-    <div class="auth-logo" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px">
+    <div class="auth-logo" style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:4px">
       <img src="/assets/logo.png" alt=""
-        style="height:52px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 0 10px rgba(245,166,35,.5))"
+        style="height:72px;width:72px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 0 14px rgba(245,166,35,.6))"
         onerror="this.style.display='none'">
       <span>CRYPTO DESERT</span>
     </div>
@@ -1137,16 +1148,17 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
 
     <!-- Enemy side (top right) -->
     <div id="enemy-arena">
-      <div class="arena-info-box">
-        <div class="aib-name" id="e-aname">—</div>
-        <div class="aib-tier" id="e-atier"></div>
-        <div class="aib-bar bwrap bhp">
-          <div class="bl"><span>HP</span><span id="e-ahp">—</span></div>
-          <div class="btrack" style="height:6px"><div class="bfill" id="e-ahp-bar" style="width:100%"></div></div>
-        </div>
-        <div style="font-size:.62rem;color:var(--muted);margin-top:4px" id="e-afactor"></div>
-      </div>
       <div id="enemy-sprite"><div class="status-overlay"></div>👾</div>
+    </div>
+    <!-- Enemy info — top left, separado do sprite -->
+    <div class="arena-info-box" style="position:absolute;top:12px;left:12px;z-index:5">
+      <div class="aib-name" id="e-aname">—</div>
+      <div class="aib-tier" id="e-atier"></div>
+      <div class="aib-bar bwrap bhp">
+        <div class="bl"><span>HP</span><span id="e-ahp">—</span></div>
+        <div class="btrack" style="height:6px"><div class="bfill" id="e-ahp-bar" style="width:100%"></div></div>
+      </div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:4px" id="e-afactor"></div>
     </div>
 
     <!-- Player side (bottom left) -->
@@ -1178,7 +1190,7 @@ header{text-align:center;padding:20px 0 14px;border-bottom:1px solid var(--amber
     <!-- Actions + queue -->
     <div id="apanel">
       <div id="init-bar">
-        <div style="font-size:.56rem;letter-spacing:.1em;color:var(--muted)">INICIATIVA</div>
+        <div style="font-size:.54rem;letter-spacing:.1em;color:var(--muted)">INICIATIVA</div>
         <div class="itrack" id="itrack"></div>
       </div>
       <div id="eq-strip"></div>
@@ -1620,6 +1632,11 @@ async function loadTicker(){
 //  TABS
 // ═══════════════════════════════════════════════════════════════
 async function goTab(name){
+  // Toca menu ao navegar fora de batalha
+  if(['world','create','roster','shop','campfire','inventory'].includes(name)){
+    _lastAudioPhase = null;
+    Audio_.music('music_menu');
+  }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   hideBattle();
@@ -1902,6 +1919,8 @@ async function replayMission(){
   }catch(e){toast('❌ '+e.message);}
 }
 function renderWaveIntro(snap){
+  // Toca música boss se for wave de boss
+  if(isBossSnap(snap)) audioForPhase('wave_intro', true);
   el('wi-title').textContent=snap.active_wave_title||'ENCONTRO';
   el('wi-text').textContent=snap.message;
   html('wi-enemies',(snap.enemy_queue||[]).map(e=>`
@@ -1920,6 +1939,8 @@ async function beginBattle(){
     document.querySelectorAll('#world-views > div').forEach(d=>d.style.display='none');
     showBattle(snap);
     setActionsEnabled(true);
+    // Toca música correta (boss ou normal)
+    audioForPhase('battle', isBossSnap(snap));
     logSys('═══ BATALHA INICIADA ═══');
     setArenaBackground(snap.active_faction);
     updateActions(snap);
@@ -1999,7 +2020,11 @@ async function doAction(action){
         if(isCrit) Audio_.sfx('sfx_critical');
         if(playerHit){ hitEnemy(); floatDamage(ev.damage,isCrit,true,dmgType); }
         else { floatDamage(ev.damage,isCrit,false,dmgType); }
-      } else if(ev.message?.includes('erra')||ev.message?.includes('↷')){
+      } else if(ev.message&&(
+               ev.message.includes('↷')||
+               ev.message.includes('erra')||
+               ev.message.includes('falhou')||
+               ev.message.includes('ERROU'))){
         Audio_.sfx('sfx_miss');
       }
       await delay(300);
@@ -2018,8 +2043,15 @@ async function doAction(action){
         if(ev.damage>0){
           const isCrit=ev.message?.includes('CRÍTICO');
           const playerHit=ev.actor===pname;
+          if(isCrit) Audio_.sfx('sfx_critical');
           if(playerHit) floatDamage(ev.damage,isCrit,false);
           else { hitEnemy(); floatDamage(ev.damage,isCrit,true); }
+        } else if(ev.message&&(
+                  ev.message.includes('↷')||
+                  ev.message.includes('erra')||
+                  ev.message.includes('falhou')||
+                  ev.message.includes('ERROU'))){
+          Audio_.sfx('sfx_miss');
         }
         await delay(300);
       }
@@ -2039,10 +2071,17 @@ function logBattleMessage(snap){
   }
   if(snap.message) logLine(snap.message,'linfo');
 }
+function isBossSnap(snap){
+  // Detecta boss por múltiplos sinais
+  if(snap.enemy_queue?.some(e=>e.is_boss)) return true;
+  if(snap.active_wave_title?.toLowerCase().includes('boss')) return true;
+  if(snap.message?.toLowerCase().includes('boss')) return true;
+  return false;
+}
+
 function handlePhase(snap){
   // Toca música correta para a fase
-  const isBoss = snap.enemy_queue?.some(e=>e.is_current&&e.is_boss);
-  audioForPhase(snap.phase, isBoss);
+  audioForPhase(snap.phase, isBossSnap(snap));
 
   switch(snap.phase){
     case 'battle':
@@ -2057,9 +2096,24 @@ function handlePhase(snap){
       hideBattle(); el('me-msg').textContent=snap.message; showView('vmissionend');
       refreshChars(); break;
     case 'game_over':
-      hideBattle(); el('go-msg').textContent=snap.message; showView('vgameover'); break;
+      hideBattle();
+      el('go-msg').textContent=snap.message;
+      showView('vgameover');
+      // Para música, toca playerdie, depois menu após 8s
+      // Stop music safely, then play death SFX
+      try{ Audio_._stopMusic(); }catch(e){}
+      setTimeout(()=>{
+        try{ Audio_.sfx('sfx_playerdie'); }catch(e){}
+      }, 200);
+      setTimeout(()=>{
+        try{ if(!Audio_.muted) Audio_.music('music_menu'); }catch(e){}
+      }, 8000);
+      _lastAudioPhase = null;
+      break;
     case 'city_screen':
-      hideBattle(); renderCityScreen(snap); showView('vcity'); break;
+      hideBattle(); renderCityScreen(snap); showView('vcity');
+      _lastAudioPhase = null; // permite menu tocar ao voltar
+      break;
   }
 }
 async function confirmWave(){
@@ -2876,7 +2930,9 @@ function enterGame(username, isNewUser=false){
   el('auth-username').textContent=username;
   el('app').style.display='block';
   Audio_.loadPrefs();
-  setTimeout(()=>Audio_.music('music_menu'), 1000);
+  // Inicia música do menu — HTMLAudioElement não precisa de gesto do usuário no mesmo nível
+  // Música inicia após primeira interação (política de autoplay)
+  Audio_._pendingKey = 'music_menu';
 }
 
 // Adiciona token em todas as requisições da API
@@ -2915,13 +2971,10 @@ async function checkAuth(){
 // ═══════════════════════════════════════════════════════════════
 
 const SFX_PATHS = {
-  // Músicas (loop)
   music_menu:    '/assets/audio/music/menu.mp3',
   music_battle:  '/assets/audio/music/battle.mp3',
   music_boss:    '/assets/audio/music/boss.mp3',
   music_victory: '/assets/audio/music/victory.mp3',
-
-  // Efeitos sonoros
   sfx_attack:    '/assets/audio/sfx/attack.mp3',
   sfx_critical:  '/assets/audio/sfx/critical.mp3',
   sfx_miss:      '/assets/audio/sfx/miss.mp3',
@@ -2937,127 +2990,107 @@ const SFX_PATHS = {
   sfx_click:     '/assets/audio/sfx/click.mp3',
 };
 
+// ── AUDIO SYSTEM ──────────────────────────────────────────────────────────────
+// Usa HTMLAudioElement — mais simples e confiável que Web Audio API
 const Audio_ = {
-  musicVol: .4,
-  sfxVol:   .35,
-  muted:    false,
-  _current: null,   // música atual tocando
-  _cache:   {},     // AudioBuffers cacheados
+  musicVol:  0.4,
+  sfxVol:    0.35,
+  muted:     false,
+  _musicKey: null,
+  _music:    null,
+  _lastKey:  null,
+  _ready:    false, // true após primeira interação do usuário
 
-  init(){
-    this.ctx = null;
-    // Lazy-init AudioContext na primeira interação do usuário
-    document.addEventListener('click', ()=>{ if(!this.ctx) this._initCtx(); }, {once:true});
-  },
-
-  _initCtx(){
-    try{
-      this.ctx = new (window.AudioContext||window.webkitAudioContext)();
-      this.ctx.addEventListener('statechange', ()=>{
-        if(this.ctx.state==='suspended' && !this.muted) this.ctx.resume();
-      });
+  // Chamado na primeira interação — desbloqueia autoplay
+  _unlock(){
+    if(this._ready) return;
+    this._ready = true;
+    if(this._pendingKey){
+      this.music(this._pendingKey);
+      this._pendingKey = null;
     }
-    catch(e){ console.warn('Web Audio não disponível'); }
   },
 
-  // Pré-carrega um arquivo de áudio
-  async _load(key){
-    if(this._cache[key]) return this._cache[key];
+  music(key){
+    if(this.muted) return;
+    if(this._musicKey === key) return;
+
+    // Se ainda não desbloqueado, guarda para tocar depois
+    if(!this._ready){
+      this._pendingKey = key;
+      return;
+    }
+
+    // Para música atual sem destruir o cache
+    if(this._music){
+      this._music.pause();
+      this._music = null;
+      this._musicKey = null;
+    }
+
     const path = SFX_PATHS[key];
-    if(!path) return null;
+    if(!path) return;
+
+    const audio = new Audio(path);
+    audio.loop   = true;
+    audio.volume = this.musicVol;
+    audio.play().catch(e => console.warn('[audio]', key, e.message));
+    this._music    = audio;
+    this._musicKey = key;
+    this._lastKey  = key;
+  },
+
+  playVictory(){
+    if(this.muted) return;
+    if(this._musicKey === 'music_victory') return;
+    if(this._music){ this._music.pause(); this._music = null; this._musicKey = null; }
+    const path = SFX_PATHS['music_victory'];
+    if(!path) return;
+    const audio = new Audio(path);
+    audio.loop   = false;
+    audio.volume = this.musicVol;
+    audio.play().catch(()=>{});
+    audio.onended = ()=>{ this._music = null; this._musicKey = null; };
+    this._music    = audio;
+    this._musicKey = 'music_victory';
+  },
+
+  sfx(key){
+    if(this.muted) return;
+    const path = SFX_PATHS[key];
+    if(!path) return;
     try{
-      const resp = await fetch(path);
-      if(!resp.ok) return null;
-      const buf  = await resp.arrayBuffer();
-      if(!this.ctx) this._initCtx();
-      if(!this.ctx) return null;
-      const decoded = await this.ctx.decodeAudioData(buf);
-      this._cache[key] = decoded;
-      return decoded;
-    }catch(e){ return null; }
-  },
-
-  // Toca um efeito sonoro (sem loop)
-  async sfx(key){
-    if(this.muted) return;
-    const buf = await this._load(key);
-    if(!buf || !this.ctx) return;
-    const src = this.ctx.createBufferSource();
-    const gain = this.ctx.createGain();
-    gain.gain.value = this.sfxVol;
-    src.buffer = buf;
-    src.connect(gain).connect(this.ctx.destination);
-    src.start();
-  },
-
-  // Toca música em loop (para se já tocando outra)
-  async music(key){
-    if(this.muted) return;
-    if(this._currentKey === key) return; // já tocando
-    this.stopMusic();
-    const buf = await this._load(key);
-    if(!buf || !this.ctx) return;
-    const src = this.ctx.createBufferSource();
-    const gain = this.ctx.createGain();
-    gain.gain.value = 0;
-    src.buffer = buf;
-    src.loop = true;
-    src.connect(gain).connect(this.ctx.destination);
-    src.start();
-    // Fade in
-    gain.gain.linearRampToValueAtTime(this.musicVol, this.ctx.currentTime + 1.5);
-    this._current = {src, gain};
-    this._currentKey = key;
-    this._lastMusicKey = key; // guarda para retomar após unmute
-  },
-
-  stopMusic(){
-    if(this._current){
-      try{
-        const {src, gain} = this._current;
-        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.8);
-        setTimeout(()=>{ try{ src.stop(); }catch(e){} }, 900);
-      }catch(e){}
-      this._current = null;
-      this._currentKey = null;
-    }
+      const audio = new Audio(path);
+      audio.volume = this.sfxVol;
+      audio.play().catch(()=>{}); // silently ignore autoplay errors
+    }catch(e){}
   },
 
   toggle(){
     this.muted = !this.muted;
-    const btn = document.getElementById('audio-toggle');
+    const btn = el('audio-toggle');
+    const lbl = el('mute-label');
     if(this.muted){
-      this.stopMusic();
+      if(this._music) this._music.pause();
       if(btn) btn.textContent = '🔇';
-      const lbl1=document.getElementById('mute-label');
-      if(lbl1) lbl1.textContent='🔊 Desmutar';
+      if(lbl) lbl.textContent = '🔊 Desmutar';
     } else {
-      // Retoma o AudioContext se estiver suspenso
-      if(this.ctx && this.ctx.state === 'suspended'){
-        this.ctx.resume();
-      }
       if(btn) btn.textContent = '🔊';
-      const lbl2=document.getElementById('mute-label');
-      if(lbl2) lbl2.textContent='🔇 Mutar tudo';
-      // Retoma a música da fase atual
-      if(this._lastMusicKey){
-        const key = this._lastMusicKey;
-        this._currentKey = null; // força retomar mesmo sendo a mesma key
-        this.music(key);
+      if(lbl) lbl.textContent = '🔇 Mutar tudo';
+      if(this._music){
+        this._music.volume = this.musicVol;
+        this._music.play().catch(()=>{});
+      } else if(this._lastKey){
+        this.music(this._lastKey);
       }
     }
-    localStorage.setItem('cd_muted', this.muted?'1':'0');
+    localStorage.setItem('cd_muted', this.muted ? '1' : '0');
   },
 
   setMusicVol(v){
     this.musicVol = v;
+    if(this._music) this._music.volume = v;
     localStorage.setItem('cd_music_vol', v);
-    // Aplica no gain atual se estiver tocando
-    if(this._current && this.ctx){
-      this._current.gain.gain.linearRampToValueAtTime(
-        this.muted ? 0 : v, this.ctx.currentTime + 0.1
-      );
-    }
   },
 
   setSfxVol(v){
@@ -3066,36 +3099,46 @@ const Audio_ = {
   },
 
   loadPrefs(){
-    this.muted = localStorage.getItem('cd_muted') === '1';
-    const savedMusic = localStorage.getItem('cd_music_vol');
-    const savedSfx   = localStorage.getItem('cd_sfx_vol');
-    if(savedMusic){ this.musicVol = parseFloat(savedMusic); }
-    if(savedSfx)  { this.sfxVol   = parseFloat(savedSfx);   }
-
-    // Atualiza UI dos sliders
-    const vm = document.getElementById('vol-music');
-    const vs = document.getElementById('vol-sfx');
-    const vmv = document.getElementById('vol-music-val');
-    const vsv = document.getElementById('vol-sfx-val');
-    if(vm){ vm.value = Math.round(this.musicVol*100); }
-    if(vs){ vs.value = Math.round(this.sfxVol*100);   }
-    if(vmv){ vmv.textContent = Math.round(this.musicVol*100)+'%'; }
-    if(vsv){ vsv.textContent = Math.round(this.sfxVol*100)+'%';   }
-
-    // Atualiza botão mute
-    const btn = document.getElementById('audio-toggle');
-    const lbl = document.getElementById('mute-label');
-    if(this.muted){
-      if(btn) btn.textContent = '🔇';
-      if(lbl) lbl.textContent = '🔊 Desmutar';
-    }
-  }
+    this.muted    = localStorage.getItem('cd_muted')     === '1';
+    const vm = parseFloat(localStorage.getItem('cd_music_vol') || '0.4');
+    const vs = parseFloat(localStorage.getItem('cd_sfx_vol')   || '0.35');
+    this.musicVol = vm;
+    this.sfxVol   = vs;
+    const slm = el('vol-music'), sls = el('vol-sfx');
+    const vlm = el('vol-music-val'), vls = el('vol-sfx-val');
+    if(slm) slm.value = Math.round(vm*100);
+    if(sls) sls.value = Math.round(vs*100);
+    if(vlm) vlm.textContent = Math.round(vm*100)+'%';
+    if(vls) vls.textContent = Math.round(vs*100)+'%';
+    const btn = el('audio-toggle');
+    const lbl = el('mute-label');
+    if(this.muted){ if(btn) btn.textContent='🔇'; if(lbl) lbl.textContent='🔊 Desmutar'; }
+  },
 };
 
-Audio_.init();
+// Desbloqueia áudio e toca SFX de clique em botões
+document.addEventListener('click', (e)=>{
+  Audio_._unlock();
+  // Toca SFX de clique em qualquer botão
+  const t = e.target;
+  if(t && (t.tagName === 'BUTTON' || t.closest('button') ||
+           t.classList.contains('abtn') || t.classList.contains('btn') ||
+           t.classList.contains('cls-card') || t.classList.contains('crow') ||
+           t.classList.contains('city-card') || t.classList.contains('cfoffer'))){
+    Audio_.sfx('sfx_click');
+  }
+}, false);
+document.addEventListener('keydown',  ()=> Audio_._unlock(), {once:true});
+document.addEventListener('touchend', ()=> Audio_._unlock(), {once:true});
 
 // Integração com fases do jogo
+let _lastAudioPhase = null;
 function audioForPhase(phase, isBossWave){
+  // Só muda a música se a fase mudou para evitar sobreposição
+  const key = phase + (isBossWave?'_boss':'');
+  if(key === _lastAudioPhase) return;
+  _lastAudioPhase = key;
+
   if(phase === 'battle' || phase === 'wave_intro'){
     Audio_.music(isBossWave ? 'music_boss' : 'music_battle');
   } else if(phase === 'wave_cleared' || phase === 'mission_cleared'){
