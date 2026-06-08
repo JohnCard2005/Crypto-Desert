@@ -28,8 +28,30 @@
 
 ---
 
+# 📋 Especificação do Projeto
+
+Este projeto foi desenvolvido como Trabalho Final da disciplina de **Estrutura de Dados II**, seguindo os requisitos e critérios definidos pelo professor.
+
+📌 **Repositório oficial do enunciado:**
+https://github.com/brunogabrielpk/crypto-desert-ed2
+
+O documento oficial contém:
+
+- Regras da mecânica de combate;
+- Requisitos de integração com APIs de criptomoedas;
+- Estruturas de dados obrigatórias;
+- Requisitos de persistência;
+- Critérios de avaliação;
+- Entregáveis obrigatórios;
+- Requisitos de Docker e Git.
+
+Este repositório representa a implementação prática da proposta acadêmica apresentada no enunciado oficial.
+
+---
+
 # 📖 Sumário
 
+- [Especificação do Projeto](#-especificação-do-projeto)
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Narrativa](#-narrativa)
 - [Funcionalidades](#-funcionalidades)
