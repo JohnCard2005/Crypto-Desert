@@ -98,7 +98,11 @@ O jogador atravessa cidades, enfrenta ondas de inimigos, derrota chefes e evolui
 
 # 📖 Historia
 
+O universo de **Crypto Desert** possui uma narrativa completa e detalhada, estruturada em Atos que definem a progressão de jogo, o desenvolvimento do ecossistema e o comportamento dos chefes.
 
+A história detalhada, diálogos e as mecânicas narrativas de cada boss estão documentados no arquivo exclusivo de enredo.
+
+👉 **[Clique aqui para ler a história completa em Historia.md](./Historia.md)**
 
 ---
 # 🚀 Funcionalidades
