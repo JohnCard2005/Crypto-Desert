@@ -55,6 +55,7 @@ Este repositório representa a implementação prática da proposta acadêmica a
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Narrativa](#-narrativa)
 - [Historia](#-historia)
+- [Jogue Agora](#-jogue-agora)
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
 - [Arquitetura](#️-arquitetura)
@@ -103,6 +104,14 @@ O universo de **Crypto Desert** possui uma narrativa completa e detalhada, estru
 A história detalhada, diálogos e as mecânicas narrativas de cada boss estão documentados no arquivo exclusivo de enredo.
 
 👉 **[Clique aqui para ler a história completa em Historia.md](./Historia.md)**
+
+---
+
+# 🎮 Jogue Agora
+
+A versão estável do jogo já está compilada e hospedada em ambiente de produção. Você pode testar o projeto diretamente pelo navegador:
+
+👉 **[Acesse o Crypto Desert em Produção](https://crypto-desert-production.up.railway.app)**
 
 ---
 # 🚀 Funcionalidades
