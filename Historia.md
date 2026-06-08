@@ -1,6 +1,7 @@
 # 🌵 Crypto Desert: Cyberpunk RPG Script
 
-![Game Status](https://img.shields.io/badge/Status-%100Finalizado-green)
+![Game Status](https://img.shields.io/badge/Status-Finalizado-brightgreen)
+![Progresso](https://img.shields.io/badge/Progresso-100%25-brightgreen)
 ![Setting](https://img.shields.io/badge/Ambiente-Cyberpunk%20%2F%20Sci--Fi-blue)
 ![Engine](https://img.shields.io/badge/Foco-Game%20Design%20%2F%20Narrativa-green)
 
