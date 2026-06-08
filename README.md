@@ -54,6 +54,7 @@ Este repositório representa a implementação prática da proposta acadêmica a
 - [Especificação do Projeto](#-especificação-do-projeto)
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Narrativa](#-narrativa)
+- [Historia](#-historia)
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
 - [Arquitetura](#️-arquitetura)
@@ -95,6 +96,11 @@ O jogador atravessa cidades, enfrenta ondas de inimigos, derrota chefes e evolui
 
 ---
 
+# 📖 Historia
+
+
+
+---
 # 🚀 Funcionalidades
 
 | Sistema | Status |
