@@ -4,10 +4,10 @@
 
 ![Go](https://img.shields.io/badge/Go-1.24-00ADD8?logo=go)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite)
-![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)
+![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?logo=railway)
 ![License](https://img.shields.io/badge/Academic_Project-AEMS-blue)
 
----
+-----
 
 # 📚 Trabalho Acadêmico
 
@@ -26,14 +26,14 @@
 - Mahgid Thomé
 - Alberto Suave
 
----
+-----
 
 # 📋 Especificação do Projeto
 
 Este projeto foi desenvolvido como Trabalho Final da disciplina de **Estrutura de Dados II**, seguindo os requisitos e critérios definidos pelo professor.
 
 📌 **Repositório oficial do enunciado:**
-https://github.com/brunogabrielpk/crypto-desert-ed2
+<https://github.com/brunogabrielpk/crypto-desert-ed2>
 
 O documento oficial contém:
 
@@ -47,7 +47,7 @@ O documento oficial contém:
 
 Este repositório representa a implementação prática da proposta acadêmica apresentada no enunciado oficial.
 
----
+-----
 
 # 📖 Sumário
 
@@ -67,7 +67,7 @@ Este repositório representa a implementação prática da proposta acadêmica a
 - [Persistência](#-persistência)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Instalação](#️-instalação)
-- [Docker](#-docker)
+- [Deploy com Railway](#-deploy-com-railway)
 - [Endpoints da API](#-endpoints-da-api)
 - [Variáveis de Ambiente](#-variáveis-de-ambiente)
 - [Testes](#-testes)
@@ -75,7 +75,7 @@ Este repositório representa a implementação prática da proposta acadêmica a
 - [Equipe](#-equipe)
 - [Licença](#-licença)
 
----
+-----
 
 # 🎮 Sobre o Projeto
 
@@ -83,7 +83,7 @@ Crypto Desert é um RPG de turnos ambientado em um universo pós-apocalíptico d
 
 O principal diferencial do jogo é a integração em tempo real com o mercado de criptomoedas. A valorização ou desvalorização de cada ativo influencia diretamente os atributos de combate dos personagens.
 
----
+-----
 
 # 🌍 Narrativa
 
@@ -91,11 +91,11 @@ No ano de 2087, os governos colapsaram e o controle global foi assumido por fac�
 
 Cada facção possui sua própria moeda e recruta guerreiros cujo poder depende diretamente do desempenho de seus ativos no mercado.
 
-> "Aqui, seu poder não vem do treinamento. Vem do mercado."
+> “Aqui, seu poder não vem do treinamento. Vem do mercado.”
 
 O jogador atravessa cidades, enfrenta ondas de inimigos, derrota chefes e evolui seu personagem em uma jornada onde economia e combate estão diretamente conectados.
 
----
+-----
 
 # 📖 Historia
 
@@ -105,7 +105,7 @@ A história detalhada, diálogos e as mecânicas narrativas de cada boss estão 
 
 👉 **[Clique aqui para ler a história completa em Historia.md](./Historia.md)**
 
----
+-----
 
 # 🎮 Jogue Agora
 
@@ -113,43 +113,44 @@ A versão estável do jogo já está compilada e hospedada em ambiente de produ�
 
 👉 **[Acesse o Crypto Desert em Produção](https://crypto-desert-production.up.railway.app)**
 
----
+-----
+
 # 🚀 Funcionalidades
 
-| Sistema | Status |
-|----------|----------|
-| Sistema de Login | ✅ |
-| Criação de Personagens | ✅ |
-| 5 Classes Jogáveis | ✅ |
-| 5 Facções | ✅ |
-| Combate baseado em d20 | ✅ |
-| Sistema de Habilidades | ✅ |
-| IA Inimiga | ✅ |
-| Sistema de Missões | ✅ |
-| Progressão por Nível | ✅ |
-| Inventário | ✅ |
-| Equipamentos | ✅ |
-| Loja Dinâmica | ✅ |
-| Campfire | ✅ |
-| Ranking Global | ✅ |
-| New Game Plus | ✅ |
-| Integração com API de Criptomoedas | ✅ |
-| Persistência SQLite | ✅ |
+|Sistema                           |Status|
+|----------------------------------|------|
+|Sistema de Login                  |✅     |
+|Criação de Personagens            |✅     |
+|5 Classes Jogáveis                |✅     |
+|5 Facções                         |✅     |
+|Combate baseado em d20            |✅     |
+|Sistema de Habilidades            |✅     |
+|IA Inimiga                        |✅     |
+|Sistema de Missões                |✅     |
+|Progressão por Nível              |✅     |
+|Inventário                        |✅     |
+|Equipamentos                      |✅     |
+|Loja Dinâmica                     |✅     |
+|Campfire                          |✅     |
+|Ranking Global                    |✅     |
+|New Game Plus                     |✅     |
+|Integração com API de Criptomoedas|✅     |
+|Persistência SQLite               |✅     |
 
----
+-----
 
 # 🛠️ Tecnologias Utilizadas
 
-| Camada | Tecnologia |
-|----------|----------|
-| Backend | Go 1.24 |
-| Frontend | HTML + CSS + JavaScript |
-| Banco de Dados | SQLite |
-| API Externa | CoinGecko |
-| Containerização | Docker |
-| Controle de Versão | Git + GitHub |
+|Camada            |Tecnologia             |
+|------------------|-----------------------|
+|Backend           |Go 1.24                |
+|Frontend          |HTML + CSS + JavaScript|
+|Banco de Dados    |SQLite                 |
+|API Externa       |CoinGecko              |
+|Hospedagem        |Railway                |
+|Controle de Versão|Git + GitHub           |
 
----
+-----
 
 # 🏗️ Arquitetura
 
@@ -175,7 +176,7 @@ Persistência SQLite
 CoinGecko API
 ```
 
----
+-----
 
 # 📚 Estruturas de Dados Utilizadas
 
@@ -191,14 +192,14 @@ A fila representa naturalmente a sequência de ações durante uma batalha por t
 
 ### Complexidade
 
-| Operação | Big O |
-|-----------|-----------|
-| Inserção | O(n) |
-| Avançar turno | O(1) |
-| Consulta | O(1) |
-| Remoção | O(n) |
+|Operação     |Big O|
+|-------------|-----|
+|Inserção     |O(n) |
+|Avançar turno|O(1) |
+|Consulta     |O(1) |
+|Remoção      |O(n) |
 
----
+-----
 
 ## Hash Table
 
@@ -216,12 +217,12 @@ Permite acesso rápido às cotações sem necessidade de novas consultas à API.
 
 ### Complexidade
 
-| Operação | Big O |
-|-----------|-----------|
-| Busca | O(1) |
-| Inserção | O(1) |
+|Operação|Big O|
+|--------|-----|
+|Busca   |O(1) |
+|Inserção|O(1) |
 
----
+-----
 
 ## Banco de Dados SQLite
 
@@ -233,7 +234,7 @@ Utilizado para persistência de:
 - Ranking
 - Progresso das missões
 
----
+-----
 
 # ⚔️ Mecânica de Combate
 
@@ -280,7 +281,7 @@ Limitado entre:
 0.5x e 2.0x
 ```
 
----
+-----
 
 # 🏛️ Facções
 
@@ -304,19 +305,19 @@ Mercenários focados em eficiência.
 
 Combatentes imprevisíveis movidos por especulação.
 
----
+-----
 
 # 🧙 Classes Jogáveis
 
-| Classe | Cripto | HP | CA | Dado | Habilidade |
-|----------|----------|----------|----------|----------|----------|
-| Warrior | BTC | 120 | 14 | d10 | Fúria do Bloco |
-| Mage | ETH | 80 | 11 | d6 | Contrato Inteligente |
-| Archer | SOL | 95 | 13 | d8 | Snipe Veloz |
-| Rogue | BNB | 90 | 12 | d8 | Ataque Sombrio |
-| Shaman | DOGE | 100 | 12 | d8 | Caos Lunar |
+|Classe |Cripto|HP |CA|Dado|Habilidade          |
+|-------|------|---|--|----|--------------------|
+|Warrior|BTC   |120|14|d10 |Fúria do Bloco      |
+|Mage   |ETH   |80 |11|d6  |Contrato Inteligente|
+|Archer |SOL   |95 |13|d8  |Snipe Veloz         |
+|Rogue  |BNB   |90 |12|d8  |Ataque Sombrio      |
+|Shaman |DOGE  |100|12|d8  |Caos Lunar          |
 
----
+-----
 
 # 🌐 Integração com API
 
@@ -338,7 +339,7 @@ https://api.coingecko.com/api/v3/simple/price
 
 Caso a API esteja indisponível, o sistema utiliza a última cotação válida armazenada.
 
----
+-----
 
 # 💾 Persistência
 
@@ -358,7 +359,7 @@ Banco:
 data/game.db
 ```
 
----
+-----
 
 # 📂 Estrutura do Projeto
 
@@ -368,11 +369,11 @@ crypto-desert/
 ├── internal/
 ├── web/
 ├── Dockerfile
-├── docker-compose.yml
+├── railway.json
 └── go.mod
 ```
 
----
+-----
 
 # ⚙️ Instalação
 
@@ -381,23 +382,70 @@ git clone https://github.com/JohnCard2005/Crypto-Desert.git
 cd Crypto-Desert
 ```
 
----
+-----
 
-# 🐳 Docker
+# 🚂 Deploy com Railway
 
-```bash
-docker-compose up --build
+O projeto está hospedado no [Railway](https://railway.app), plataforma que mantém o jogo online e acessível por qualquer pessoa pelo navegador, sem necessidade de instalação.
+
+👉 **[Acesse o jogo em produção](https://crypto-desert-production.up.railway.app)**
+
+## Como funciona
+
+O Railway é conectado diretamente ao repositório no GitHub. A cada novo push na branch principal, ele detecta a mudança, builda e redeploya o projeto automaticamente.
+
+O processo completo é:
+
+1. Push no GitHub → Railway detecta a mudança
+1. Lê o `railway.json` e usa o `Dockerfile` como ambiente de build
+1. Compila o binário Go estático (`CGO_ENABLED=0`)
+1. Copia apenas o binário + pasta `web/` para uma imagem Alpine mínima
+1. Injeta as variáveis de ambiente configuradas no painel
+1. Executa `./crypto-desert` — o jogo entra no ar
+1. Se o servidor cair por algum motivo, o Railway reinicia automaticamente
+
+## Arquivo railway.json
+
+O `railway.json` é o arquivo de configuração que instrui o Railway sobre como buildar e iniciar o projeto:
+
+```json
+{
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "startCommand": "./crypto-desert",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  }
+}
 ```
 
-## DockerHub
+## Papel do Dockerfile
 
-Adicionar após publicação:
+O `Dockerfile` usa **multi-stage build** — dois estágios separados:
 
-```text
-docker pull SEU-USUARIO/crypto-desert
-```
+|Estágio  |Base                |Função                                           |
+|---------|--------------------|-------------------------------------------------|
+|`builder`|`golang:1.25-alpine`|Baixa dependências e compila o binário Go        |
+|`final`  |`alpine:3.20`       |Copia só o binário + `web/` — imagem leve e limpa|
 
----
+
+> O Docker **não é o servidor em produção**. Ele serve apenas como ambiente de compilação para o Railway gerar o executável Go. Quem mantém o jogo online é o Railway.
+
+## Variáveis de Ambiente no Railway
+
+As variáveis são configuradas diretamente no painel do Railway e injetadas automaticamente no servidor:
+
+|Variável    |Descrição                                                |
+|------------|---------------------------------------------------------|
+|`PORT`      |Porta do servidor (injetada automaticamente pelo Railway)|
+|`DB_PATH`   |Caminho do banco SQLite no servidor (`/app/data/game.db`)|
+|`JWT_SECRET`|Chave secreta para assinar os tokens de autenticação     |
+|`WEB_DIR`   |Pasta dos arquivos estáticos do frontend (`./web`)       |
+
+-----
 
 # 🔌 Endpoints da API
 
@@ -416,16 +464,18 @@ http://localhost:8080/api
 - Loja
 - Campfire
 
----
+-----
 
 # 🔐 Variáveis de Ambiente
 
-| Variável | Padrão | Descrição |
-|----------|----------|----------|
-| PORT | 8080 | Porta do servidor |
-| WEB_DIR | ./web | Diretório do frontend |
+|Variável  |Padrão               |Descrição                          |
+|----------|---------------------|-----------------------------------|
+|PORT      |8080                 |Porta do servidor                  |
+|DB_PATH   |./data/game.db       |Caminho do banco SQLite            |
+|JWT_SECRET|(definido no Railway)|Segredo para tokens de autenticação|
+|WEB_DIR   |./web                |Diretório do frontend              |
 
----
+-----
 
 # 🧪 Testes
 
@@ -433,7 +483,7 @@ http://localhost:8080/api
 go test ./...
 ```
 
----
+-----
 
 # 🌳 Controle de Versão
 
@@ -443,15 +493,15 @@ Todos os integrantes contribuíram com commits distribuídos durante o desenvolv
 
 Repositório:
 
-https://github.com/JohnCard2005/Crypto-Desert
+<https://github.com/JohnCard2005/Crypto-Desert>
 
----
+-----
 
 # 👨‍💻 Equipe
 
 Projeto desenvolvido pelos alunos do 5º Período de Engenharia da Computação da Faculdade AEMS.
 
----
+-----
 
 # 📄 Licença
 
